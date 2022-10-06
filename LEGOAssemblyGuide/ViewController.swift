@@ -1,9 +1,9 @@
 //
 //  ViewController.swift
-//  SpaceShipMuseum
+//  LEGOAssemblyGuide
 //
-//  Created by Brian Advent on 09.06.18.
-//  Copyright © 2018 Brian Advent. All rights reserved.
+//  Created by Tianxiang Song on 10.05.22.
+//  Copyright © 2022 Tianxiang Song. All rights reserved.
 //
 
 import UIKit

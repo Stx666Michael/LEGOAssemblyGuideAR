@@ -95,7 +95,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1000;
 				LastUpgradeCheck = 1340;
-				ORGANIZATIONNAME = "Brian Advent";
+				ORGANIZATIONNAME = "Tianxiang Song";
 				TargetAttributes = {
 					527951C920CC07A000B9119D = {
 						CreatedOnToolsVersion = 10.0;
@@ -289,7 +289,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LN4AV544VY;
-				INFOPLIST_FILE = SpaceShipMuseum/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/LEGOAssemblyGuide/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -307,7 +307,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LN4AV544VY;
-				INFOPLIST_FILE = SpaceShipMuseum/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/LEGOAssemblyGuide/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
