@@ -154,6 +154,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         self.currentActionIndex += 1
         if (self.currentActionIndex < self.actions.count) {
             self.shapeNode.runAction(self.actions[self.currentActionIndex], forKey: String(self.currentActionIndex))
+        } else {
+            self.shapeNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 10)))
         }
     }
     
