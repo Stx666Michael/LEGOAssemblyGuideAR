@@ -16,7 +16,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var actions = [SCNAction]()
     var nodes = [SCNNode]()
     var currentActionIndex = 0
-    let shapeNode = SCNScene(named: "art.scnassets/wheel.scn")!.rootNode.childNodes.first!
+    let shapeNode = SCNScene(named: "art.scnassets/blocks.usdz")!.rootNode.childNodes.first!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +54,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         configuration.trackingImages = trackedImages
         configuration.maximumNumberOfTrackedImages = 1
         
+        if #available(iOS 13.0, *) {
+            //configuration.frameSemantics.insert(.personSegmentationWithDepth)
+        }
+        
         // Run the view's session
         sceneView.session.run(configuration)
     }
@@ -75,8 +79,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             if anchor is ARImageAnchor {
                 
                 self.shapeNode.position = SCNVector3Zero
-                self.shapeNode.eulerAngles.y = -.pi / 2
+                self.shapeNode.eulerAngles.y = .pi / 2
                 
+                let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
+                level1?.opacity = 0.6
+                /*
                 let ground = self.shapeNode.childNode(withName: "G", recursively: true)
                 let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
                 let level2 = self.shapeNode.childNode(withName: "L2", recursively: true)
@@ -139,6 +146,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                    
                 //let sequence = SCNAction.sequence(actions)
                 self.shapeNode.runAction(self.actions.first!, forKey: String(self.currentActionIndex))
+                */
                 
                 node.addChildNode(self.shapeNode)
             }
