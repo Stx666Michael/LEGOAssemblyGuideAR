@@ -16,7 +16,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var actions = [SCNAction]()
     var nodes = [SCNNode]()
     var currentActionIndex = 0
-    let shapeNode = SCNScene(named: "art.scnassets/blocks.usdz")!.rootNode.childNodes.first!
+    let shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,8 +81,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 self.shapeNode.position = SCNVector3Zero
                 self.shapeNode.eulerAngles.y = .pi / 2
                 
-                let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
-                level1?.opacity = 0.6
+                //let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
                 /*
                 let ground = self.shapeNode.childNode(withName: "G", recursively: true)
                 let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
