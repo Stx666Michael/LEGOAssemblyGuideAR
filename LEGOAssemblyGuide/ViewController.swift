@@ -27,6 +27,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
+        sceneView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
+        
         // Create a new scene
         let scene = SCNScene(named: "art.scnassets/GameScene.scn")!
         
@@ -78,10 +80,31 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         DispatchQueue.main.async {
             if anchor is ARImageAnchor {
                 
-                self.shapeNode.position = SCNVector3Zero
-                self.shapeNode.eulerAngles.y = .pi / 2
+                self.shapeNode.position = SCNVector3(x: 0, y: 0, z: -10.1)
+                self.shapeNode.eulerAngles.y = -.pi / 2
                 
-                //let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
+                let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
+                let level2 = self.shapeNode.childNode(withName: "L2", recursively: true)
+                let level3 = self.shapeNode.childNode(withName: "L3", recursively: true)
+                let ng = self.shapeNode.childNode(withName: "NG", recursively: true)
+                let nc = self.shapeNode.childNode(withName: "NC", recursively: true)
+                let bb = self.shapeNode.childNode(withName: "BB", recursively: true)
+                let le = self.shapeNode.childNode(withName: "LE", recursively: true)
+                let lb = self.shapeNode.childNode(withName: "LB", recursively: true)
+                
+                let levels = [level1, level2, level3]
+                let buildings = [ng, nc, bb, le, lb]
+                
+                for level in levels {
+                    level?.opacity = 0
+                }
+                
+                for building in buildings {
+                    building?.opacity = 0
+                }
+                
+                level1?.opacity = 1
+                
                 /*
                 let ground = self.shapeNode.childNode(withName: "G", recursively: true)
                 let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
@@ -170,6 +193,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         if (self.currentActionIndex < self.actions.count) {
             self.endAction(nodes[self.currentActionIndex])
         }
+        let nodePosition = self.shapeNode.worldPosition
+        let nodePositionOnScreen = self.sceneView.projectPoint(nodePosition)//renderer.projectPoint(nodePosition)
+        let x = nodePositionOnScreen.x
+        let y = nodePositionOnScreen.y
+        print(x, y)
     }
     
 }

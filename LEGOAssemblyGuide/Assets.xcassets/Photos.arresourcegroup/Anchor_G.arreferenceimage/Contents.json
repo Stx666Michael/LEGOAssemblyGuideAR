@@ -1,0 +1,15 @@
+{
+  "images" : [
+    {
+      "filename" : "Anchor_G.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "width" : 21.399999999999999
+  }
+}
