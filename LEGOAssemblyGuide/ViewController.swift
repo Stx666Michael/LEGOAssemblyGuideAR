@@ -13,8 +13,8 @@ import ARKit
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
-    var actions = [SCNAction]()
     var nodes = [SCNNode]()
+    var animation = SCNAction()
     var currentActionIndex = 0
     let shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     
@@ -27,7 +27,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
-        sceneView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
+        //sceneView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
         
         // Create a new scene
         let scene = SCNScene(named: "art.scnassets/GameScene.scn")!
@@ -83,6 +83,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 self.shapeNode.position = SCNVector3(x: 0, y: 0, z: -10.1)
                 self.shapeNode.eulerAngles.y = -.pi / 2
                 
+                for num in 0...7 {
+                    let ind = "a" + String(num)
+                    self.nodes.append(self.shapeNode.childNode(withName: ind, recursively: true)!)
+                }
+                
                 let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
                 let level2 = self.shapeNode.childNode(withName: "L2", recursively: true)
                 let level3 = self.shapeNode.childNode(withName: "L3", recursively: true)
@@ -96,79 +101,25 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 let buildings = [ng, nc, bb, le, lb]
                 
                 for level in levels {
-                    level?.opacity = 0
+                    for node in level!.childNodes.shuffled() {
+                        node.isHidden = true
+                    }
                 }
                 
                 for building in buildings {
-                    building?.opacity = 0
+                    for node in building!.childNodes.shuffled() {
+                        node.isHidden = true
+                    }
                 }
                 
-                level1?.opacity = 1
+                let duration = 1.0
                 
-                /*
-                let ground = self.shapeNode.childNode(withName: "G", recursively: true)
-                let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
-                let level2 = self.shapeNode.childNode(withName: "L2", recursively: true)
-                let level3 = self.shapeNode.childNode(withName: "L3", recursively: true)
-                let level4 = self.shapeNode.childNode(withName: "L4", recursively: true)
-                let leftOuter = self.shapeNode.childNode(withName: "LeftOuter", recursively: true)
-                let rightOuter = self.shapeNode.childNode(withName: "RightOuter", recursively: true)
-                let leftInner = self.shapeNode.childNode(withName: "LeftInner", recursively: true)
-                let rightInner = self.shapeNode.childNode(withName: "RightInner", recursively: true)
+                let fadeOut = SCNAction.fadeOut(duration: duration)
+                let fadeIn = SCNAction.fadeIn(duration: duration)
+                self.animation = SCNAction.repeatForever(SCNAction.sequence([fadeOut, fadeIn]))
                 
-                let duration = 2.0
-                let distanceY = 2.0
-                let distanceZ = 20.0
-                
-                let levels = [ground, level1, level2, level3, level4]
-                let leftTires = [leftOuter, leftInner]
-                let rightTires = [rightOuter, rightInner]
-                
-                for level in levels {
-                    let initial = SCNAction.customAction(duration: 0) { (node, elapsedTime) in
-                        level?.position.y = Float(distanceY)
-                        level?.opacity = 0
-                    }
-                    let action = SCNAction.customAction(duration: duration) { (node, elapsedTime) in
-                        level?.opacity = elapsedTime / duration
-                        level?.position.y = Float(distanceY * (1 - elapsedTime/duration))
-                    }
-                    self.nodes.append(level!)
-                    self.actions.append(SCNAction.repeatForever(SCNAction.group([initial, action])))
-                    self.shapeNode.runAction(initial)
-                }
-                
-                for leftTire in leftTires {
-                    let initial = SCNAction.customAction(duration: 0) { (node, elapsedTime) in
-                        leftTire?.position.z = Float(distanceZ)
-                        leftTire?.opacity = 0
-                    }
-                    let action = SCNAction.customAction(duration: duration) { (node, elapsedTime) in
-                        leftTire?.opacity = elapsedTime / duration
-                        leftTire?.position.z = Float(distanceZ * (1 - elapsedTime/duration))
-                    }
-                    self.nodes.append(leftTire!)
-                    self.actions.append(SCNAction.repeatForever(SCNAction.group([initial, action])))
-                    self.shapeNode.runAction(initial)
-                }
-                
-                for rightTire in rightTires {
-                    let initial = SCNAction.customAction(duration: 0) { (node, elapsedTime) in
-                        rightTire?.position.z = -Float(distanceZ)
-                        rightTire?.opacity = 0
-                    }
-                    let action = SCNAction.customAction(duration: duration) { (node, elapsedTime) in
-                        rightTire?.opacity = elapsedTime / duration
-                        rightTire?.position.z = -Float(distanceZ * (1 - elapsedTime/duration))
-                    }
-                    self.nodes.append(rightTire!)
-                    self.actions.append(SCNAction.repeatForever(SCNAction.group([initial, action])))
-                    self.shapeNode.runAction(initial)
-                }
-                   
-                //let sequence = SCNAction.sequence(actions)
-                self.shapeNode.runAction(self.actions.first!, forKey: String(self.currentActionIndex))
-                */
+                self.nodes.first?.isHidden = false
+                self.nodes.first?.runAction(self.animation)
                 
                 node.addChildNode(self.shapeNode)
             }
@@ -178,26 +129,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func endAction(_ node: SCNNode) {
-        self.shapeNode.removeAction(forKey: String(self.currentActionIndex))
-        node.position = SCNVector3Zero
-        node.opacity = 1
+        node.removeAllActions()
+        node.opacity = 0.5
         self.currentActionIndex += 1
-        if (self.currentActionIndex < self.actions.count) {
-            self.shapeNode.runAction(self.actions[self.currentActionIndex], forKey: String(self.currentActionIndex))
+        if (self.currentActionIndex < self.nodes.count) {
+            self.nodes[self.currentActionIndex].isHidden = false
+            self.nodes[self.currentActionIndex].runAction(self.animation)
         } else {
             self.shapeNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 10)))
         }
     }
     
     @objc func gestureFired(_ gesture: UITapGestureRecognizer) {
-        if (self.currentActionIndex < self.actions.count) {
+        if (self.currentActionIndex < self.nodes.count) {
             self.endAction(nodes[self.currentActionIndex])
+            print(self.currentActionIndex)
         }
+        /*
         let nodePosition = self.shapeNode.worldPosition
         let nodePositionOnScreen = self.sceneView.projectPoint(nodePosition)//renderer.projectPoint(nodePosition)
         let x = nodePositionOnScreen.x
         let y = nodePositionOnScreen.y
         print(x, y)
+        */
     }
     
 }
