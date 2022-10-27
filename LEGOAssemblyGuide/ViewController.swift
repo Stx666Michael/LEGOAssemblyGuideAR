@@ -27,7 +27,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
-        //sceneView.debugOptions.insert(SCNDebugOptions.renderAsWireframe)
+        sceneView.debugOptions.insert(SCNDebugOptions.showWireframe)
         
         // Create a new scene
         let scene = SCNScene(named: "art.scnassets/GameScene.scn")!
@@ -112,10 +112,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     }
                 }
                 
-                let duration = 1.0
+                let duration = 0.5
                 
-                let fadeOut = SCNAction.fadeOut(duration: duration)
-                let fadeIn = SCNAction.fadeIn(duration: duration)
+                let fadeOut = SCNAction.fadeOpacity(by: -0.8, duration: duration)
+                let fadeIn = SCNAction.fadeOpacity(by: 0.8, duration: duration)
                 self.animation = SCNAction.repeatForever(SCNAction.sequence([fadeOut, fadeIn]))
                 
                 self.nodes.first?.isHidden = false
@@ -130,7 +130,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func endAction(_ node: SCNNode) {
         node.removeAllActions()
-        node.opacity = 0.5
+        node.opacity = 0.2
+        //node.isHidden = true
         self.currentActionIndex += 1
         if (self.currentActionIndex < self.nodes.count) {
             self.nodes[self.currentActionIndex].isHidden = false
