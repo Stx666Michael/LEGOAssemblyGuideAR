@@ -83,8 +83,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 self.shapeNode.position = SCNVector3(x: 0, y: 0, z: -10.1)
                 self.shapeNode.eulerAngles.y = -.pi / 2
                 
-                for num in 0...7 {
-                    let ind = "a" + String(num)
+                for letter in "abcdefgh" {
+                    let ind = "a" + String(letter)
                     self.nodes.append(self.shapeNode.childNode(withName: ind, recursively: true)!)
                 }
                 
@@ -114,8 +114,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 
                 let duration = 0.5
                 
-                let fadeOut = SCNAction.fadeOpacity(by: -0.8, duration: duration)
-                let fadeIn = SCNAction.fadeOpacity(by: 0.8, duration: duration)
+                let fadeOut = SCNAction.fadeOpacity(by: -2, duration: duration)
+                let fadeIn = SCNAction.fadeOpacity(by: 1, duration: duration)
                 self.animation = SCNAction.repeatForever(SCNAction.sequence([fadeOut, fadeIn]))
                 
                 self.nodes.first?.isHidden = false
@@ -130,7 +130,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func endAction(_ node: SCNNode) {
         node.removeAllActions()
-        node.opacity = 0.2
+        node.opacity = 0.01
         //node.isHidden = true
         self.currentActionIndex += 1
         if (self.currentActionIndex < self.nodes.count) {
