@@ -35,10 +35,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(gestureFired(_ :)))
-        gestureRecognizer.numberOfTapsRequired = 1
-        gestureRecognizer.numberOfTouchesRequired = 1
-        sceneView.addGestureRecognizer(gestureRecognizer)
+        let oneTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(oneTapGestureFired(_ :)))
+        oneTapRecognizer.numberOfTapsRequired = 1
+        oneTapRecognizer.numberOfTouchesRequired = 1
+        
+        let twoTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(twoTapGestureFired(_ :)))
+        twoTapRecognizer.numberOfTapsRequired = 1
+        twoTapRecognizer.numberOfTouchesRequired = 2
+        
+        sceneView.addGestureRecognizer(oneTapRecognizer)
+        sceneView.addGestureRecognizer(twoTapRecognizer)
         sceneView.isUserInteractionEnabled = true
     }
     
@@ -83,9 +89,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 self.shapeNode.position = SCNVector3(x: 0, y: 0, z: -10.1)
                 self.shapeNode.eulerAngles.y = -.pi / 2
                 
-                for letter in "abcdefgh" {
-                    let ind = "a" + String(letter)
-                    self.nodes.append(self.shapeNode.childNode(withName: ind, recursively: true)!)
+                for firstIndex in "ab" {
+                    for secondIndex in "abcdefghijklmnopqrstuvwxyz" {
+                        let index = String(firstIndex) + String(secondIndex)
+                        self.nodes.append(self.shapeNode.childNode(withName: index, recursively: true)!)
+                    }
                 }
                 
                 let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
@@ -128,7 +136,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
     }
     
-    func endAction(_ node: SCNNode) {
+    func nextAction(_ node: SCNNode) {
         node.removeAllActions()
         node.opacity = 0.01
         //node.isHidden = true
@@ -141,18 +149,33 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    @objc func gestureFired(_ gesture: UITapGestureRecognizer) {
-        if (self.currentActionIndex < self.nodes.count) {
-            self.endAction(nodes[self.currentActionIndex])
-            print(self.currentActionIndex)
-        }
-        /*
-        let nodePosition = self.shapeNode.worldPosition
-        let nodePositionOnScreen = self.sceneView.projectPoint(nodePosition)//renderer.projectPoint(nodePosition)
-        let x = nodePositionOnScreen.x
-        let y = nodePositionOnScreen.y
-        print(x, y)
-        */
+    func prevAction(_ node: SCNNode) {
+        node.removeAllActions()
+        node.opacity = 1
+        node.isHidden = true
+        self.currentActionIndex -= 1
+        self.nodes[self.currentActionIndex].opacity = 1
+        self.nodes[self.currentActionIndex].runAction(self.animation)
     }
     
+    @objc func oneTapGestureFired(_ gesture: UITapGestureRecognizer) {
+        if (self.currentActionIndex < self.nodes.count) {
+            self.nextAction(nodes[self.currentActionIndex])
+            print(self.currentActionIndex)
+        } else {
+            print("No more steps!")
+        }
+    }
+    
+    @objc func twoTapGestureFired(_ gesture: UITapGestureRecognizer) {
+        if (self.currentActionIndex == self.nodes.count) {
+            print("Assembly finished!")
+        }
+        else if (self.currentActionIndex > 0) {
+            self.prevAction(nodes[self.currentActionIndex])
+            print(self.currentActionIndex)
+        } else {
+            print("No more previous steps!")
+        }
+    }
 }
