@@ -16,6 +16,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var nodes = [SCNNode]()
     var animation = SCNAction()
     var currentActionIndex = 0
+    var actionJumpEnabled = false
     let shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     
     override func viewDidLoad() {
@@ -35,16 +36,30 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
+        // Recognize one finger tap
         let oneTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(oneTapGestureFired(_ :)))
         oneTapRecognizer.numberOfTapsRequired = 1
         oneTapRecognizer.numberOfTouchesRequired = 1
         
+        // Recognize two finger tap
         let twoTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(twoTapGestureFired(_ :)))
         twoTapRecognizer.numberOfTapsRequired = 1
         twoTapRecognizer.numberOfTouchesRequired = 2
         
+        // Recognize long press
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureFired(_ :)))
+        longPressRecognizer.numberOfTouchesRequired = 1
+        longPressRecognizer.minimumPressDuration = 1
+        
+        // Recognize pan gesture
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureFired(_ :)))
+        panGestureRecognizer.minimumNumberOfTouches = 1
+        panGestureRecognizer.maximumNumberOfTouches = 1
+        
         sceneView.addGestureRecognizer(oneTapRecognizer)
         sceneView.addGestureRecognizer(twoTapRecognizer)
+        sceneView.addGestureRecognizer(longPressRecognizer)
+        sceneView.addGestureRecognizer(panGestureRecognizer)
         sceneView.isUserInteractionEnabled = true
     }
     
@@ -178,4 +193,19 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             print("No more previous steps!")
         }
     }
+    
+    @objc func longPressGestureFired(_ gesture: UILongPressGestureRecognizer) {
+        if (gesture.state == .began) {
+            self.actionJumpEnabled = true
+            print("Action jump enabled!")
+        } else if (gesture.state == .ended) {
+            self.actionJumpEnabled = false
+            print("Action jump disabled!")
+        }
+    }
+    
+    @objc func panGestureFired(_ gusture: UIPanGestureRecognizer) {
+        
+    }
+    
 }
