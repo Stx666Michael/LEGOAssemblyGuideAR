@@ -13,7 +13,7 @@ import ARKit
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
-    //@IBOutlet weak var messagePanel: UIView!
+    @IBOutlet weak var currentStep: UILabel!
     
     var nodes = [SCNNode]()
     var animation = SCNAction()
@@ -141,11 +141,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 self.nodes.first?.isHidden = false
                 self.nodes.first?.runAction(self.animation)
                 
+                self.updateStepText()
+                
                 node.addChildNode(self.shapeNode)
             }
         }
         return node
-        
+    }
+    
+    func updateStepText() {
+        if (self.currentActionIndex == self.nodes.count) {
+            self.currentStep.text = "Construction done!"
+        } else {
+            self.currentStep.text = "Step: " + String(self.currentActionIndex+1) + " / " + String(self.nodes.count)
+        }
     }
     
     func nextAction(_ node: SCNNode) {
@@ -156,7 +165,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         if (self.currentActionIndex < self.nodes.count) {
             self.nodes[self.currentActionIndex].isHidden = false
             self.nodes[self.currentActionIndex].runAction(self.animation)
+            self.updateStepText()
         } else {
+            self.currentStep.text = "Construction done!"
             //self.shapeNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 10)))
         }
     }
@@ -167,7 +178,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         node.isHidden = true
         self.currentActionIndex -= 1
         self.nodes[self.currentActionIndex].opacity = 1
+        self.nodes[self.currentActionIndex].isHidden = false
         self.nodes[self.currentActionIndex].runAction(self.animation)
+        self.updateStepText()
     }
     
     func tryNextAction() {
@@ -180,14 +193,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func tryPrevAction() {
-        if (self.currentActionIndex == self.nodes.count) {
+        if (self.currentActionIndex == self.nodes.count && self.nodes.count > 0) {
             //print("Assembly finished!")
-            self.currentActionIndex -= 1
+            self.prevAction(nodes[self.currentActionIndex-1])
+            print(self.currentActionIndex)
         } else if (self.currentActionIndex > 0) {
             self.prevAction(nodes[self.currentActionIndex])
             print(self.currentActionIndex)
         } else {
-            print("No more previous steps!")
+            print("No previous steps!")
         }
     }
     
@@ -198,11 +212,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @objc func longPressGestureFired(_ gesture: UILongPressGestureRecognizer) {
         guard let view = gesture.view else {return}
         let screenWidth = UIScreen.main.bounds.width
-        let distancePerActionJump = Int(screenWidth) / 52//(self.nodes.count + 1)
+        let distancePerActionJump = Int(screenWidth) / (self.nodes.count + 1)
         
         if (gesture.state == .began) {
             self.initialPoint = gesture.location(in: view.superview)
             print("Action jump enabled!")
+            self.currentStep.text = "Drag left / right to change steps"
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {self.updateStepText()}
         } else if (gesture.state == .changed) {
             let currentPoint = gesture.location(in: view.superview)
             let dragDistanceX = currentPoint.x - initialPoint.x
