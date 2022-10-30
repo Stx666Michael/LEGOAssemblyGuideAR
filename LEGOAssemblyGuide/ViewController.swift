@@ -16,8 +16,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var nodes = [SCNNode]()
     var animation = SCNAction()
     var currentActionIndex = 0
-    var actionJumpEnabled = false
-    let shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
+    var initialDragPoint = CGPoint()
+    var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,15 +51,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         longPressRecognizer.numberOfTouchesRequired = 1
         longPressRecognizer.minimumPressDuration = 1
         
-        // Recognize pan gesture
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureFired(_ :)))
-        panGestureRecognizer.minimumNumberOfTouches = 1
-        panGestureRecognizer.maximumNumberOfTouches = 1
-        
         sceneView.addGestureRecognizer(oneTapRecognizer)
         sceneView.addGestureRecognizer(twoTapRecognizer)
         sceneView.addGestureRecognizer(longPressRecognizer)
-        sceneView.addGestureRecognizer(panGestureRecognizer)
         sceneView.isUserInteractionEnabled = true
     }
     
@@ -185,8 +179,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @objc func twoTapGestureFired(_ gesture: UITapGestureRecognizer) {
         if (self.currentActionIndex == self.nodes.count) {
             print("Assembly finished!")
-        }
-        else if (self.currentActionIndex > 0) {
+        } else if (self.currentActionIndex > 0) {
             self.prevAction(nodes[self.currentActionIndex])
             print(self.currentActionIndex)
         } else {
@@ -196,16 +189,18 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @objc func longPressGestureFired(_ gesture: UILongPressGestureRecognizer) {
         if (gesture.state == .began) {
-            self.actionJumpEnabled = true
             print("Action jump enabled!")
+            guard let view = gesture.view else {return}
+            self.initialDragPoint = gesture.location(in: view.superview)
+        } else if (gesture.state == .changed) {
+            guard let view = gesture.view else {return}
+            let point = gesture.location(in: view.superview)
+            let dragDistanceX = point.x - initialDragPoint.x
+            print(dragDistanceX)
+            
         } else if (gesture.state == .ended) {
-            self.actionJumpEnabled = false
             print("Action jump disabled!")
         }
-    }
-    
-    @objc func panGestureFired(_ gusture: UIPanGestureRecognizer) {
-        
     }
     
 }
