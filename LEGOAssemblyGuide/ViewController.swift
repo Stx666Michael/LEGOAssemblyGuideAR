@@ -13,10 +13,13 @@ import ARKit
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
+    //@IBOutlet weak var messagePanel: UIView!
+    
     var nodes = [SCNNode]()
     var animation = SCNAction()
     var currentActionIndex = 0
-    var initialDragPoint = CGPoint()
+    var lastActionShift = 0
+    var initialPoint = CGPoint()
     var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     
     override func viewDidLoad() {
@@ -148,13 +151,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func nextAction(_ node: SCNNode) {
         node.removeAllActions()
         node.opacity = 0.01
-        //node.isHidden = true
         self.currentActionIndex += 1
+        
         if (self.currentActionIndex < self.nodes.count) {
             self.nodes[self.currentActionIndex].isHidden = false
             self.nodes[self.currentActionIndex].runAction(self.animation)
         } else {
-            self.shapeNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 10)))
+            //self.shapeNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 10)))
         }
     }
     
@@ -167,7 +170,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         self.nodes[self.currentActionIndex].runAction(self.animation)
     }
     
-    @objc func oneTapGestureFired(_ gesture: UITapGestureRecognizer) {
+    func tryNextAction() {
         if (self.currentActionIndex < self.nodes.count) {
             self.nextAction(nodes[self.currentActionIndex])
             print(self.currentActionIndex)
@@ -176,9 +179,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    @objc func twoTapGestureFired(_ gesture: UITapGestureRecognizer) {
+    func tryPrevAction() {
         if (self.currentActionIndex == self.nodes.count) {
-            print("Assembly finished!")
+            //print("Assembly finished!")
+            self.currentActionIndex -= 1
         } else if (self.currentActionIndex > 0) {
             self.prevAction(nodes[self.currentActionIndex])
             print(self.currentActionIndex)
@@ -187,18 +191,37 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
+    @objc func oneTapGestureFired(_ gesture: UITapGestureRecognizer) {self.tryNextAction()}
+    
+    @objc func twoTapGestureFired(_ gesture: UITapGestureRecognizer) {self.tryPrevAction()}
+    
     @objc func longPressGestureFired(_ gesture: UILongPressGestureRecognizer) {
+        guard let view = gesture.view else {return}
+        let screenWidth = UIScreen.main.bounds.width
+        let distancePerActionJump = Int(screenWidth) / 52//(self.nodes.count + 1)
+        
         if (gesture.state == .began) {
+            self.initialPoint = gesture.location(in: view.superview)
             print("Action jump enabled!")
-            guard let view = gesture.view else {return}
-            self.initialDragPoint = gesture.location(in: view.superview)
         } else if (gesture.state == .changed) {
-            guard let view = gesture.view else {return}
-            let point = gesture.location(in: view.superview)
-            let dragDistanceX = point.x - initialDragPoint.x
-            print(dragDistanceX)
-            
+            let currentPoint = gesture.location(in: view.superview)
+            let dragDistanceX = currentPoint.x - initialPoint.x
+            let currentActionShift = Int(dragDistanceX) / distancePerActionJump
+            var relativeActionShift = 0
+            if (self.lastActionShift != currentActionShift) {
+                relativeActionShift = currentActionShift - self.lastActionShift
+                self.lastActionShift = currentActionShift
+                //print(relativeActionShift)
+                for _ in 1...abs(relativeActionShift) {
+                    if (relativeActionShift > 0) {
+                        self.tryNextAction()
+                    } else {
+                        self.tryPrevAction()
+                    }
+                }
+            }
         } else if (gesture.state == .ended) {
+            self.lastActionShift = 0
             print("Action jump disabled!")
         }
     }
