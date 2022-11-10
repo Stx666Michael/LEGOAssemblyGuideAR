@@ -101,7 +101,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 self.shapeNode.position = SCNVector3(x: 0, y: 0, z: -10.1)
                 self.shapeNode.eulerAngles.y = -.pi / 2
                 
-                for firstIndex in "ab" {
+                for firstIndex in "abcde" {
                     for secondIndex in "abcdefghijklmnopqrstuvwxyz" {
                         let index = String(firstIndex) + String(secondIndex)
                         self.nodes.append(self.shapeNode.childNode(withName: index, recursively: true)!)
@@ -159,7 +159,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func nextAction(_ node: SCNNode) {
         node.removeAllActions()
-        node.opacity = 0.01
+        node.opacity = 0.9
         self.currentActionIndex += 1
         
         if (self.currentActionIndex < self.nodes.count) {
