@@ -47,6 +47,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
+        subSceneView.isHidden = true
+        
         // Recognize one finger tap
         let oneTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(oneTapGestureFired(_ :)))
         oneTapRecognizer.numberOfTapsRequired = 1
@@ -71,6 +73,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         wireframe.addTarget(self, action: #selector(self.wireframeStateDidChange(_:)), for: .valueChanged)
         hand.addTarget(self, action: #selector(self.handStateDidChange(_:)), for: .valueChanged)
         previous.addTarget(self, action: #selector(self.previousStateDidChange(_:)), for: .valueChanged)
+        preview.addTarget(self, action: #selector(self.previewStateDidChange(_:)), for: .valueChanged)
         
         hand.setOn(false, animated: true)
         preview.setOn(false, animated: true)
@@ -313,6 +316,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 node.isHidden = true
             }
             print("Previous steps is now Off")
+        }
+    }
+    
+    @objc func previewStateDidChange(_ sender: UISwitch!) {
+        if (sender.isOn == true) {
+            self.subSceneView.isHidden = false
+            print("Preview is now ON")
+        } else {
+            self.subSceneView.isHidden = true
+            print("Preview is now Off")
         }
     }
     
