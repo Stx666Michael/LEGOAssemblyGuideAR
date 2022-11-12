@@ -14,12 +14,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet weak var currentStep: UILabel!
+    @IBOutlet weak var surface: UISwitch!
+    @IBOutlet weak var wireframe: UISwitch!
+    @IBOutlet weak var hand: UISwitch!
+    @IBOutlet weak var autostep: UISwitch!
     
     var nodes = [SCNNode]()
     var animation = SCNAction()
     var currentActionIndex = 0
     var lastActionShift = 0
     var initialPoint = CGPoint()
+    var configuration = ARImageTrackingConfiguration()
     var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     
     override func viewDidLoad() {
@@ -58,13 +63,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.addGestureRecognizer(twoTapRecognizer)
         sceneView.addGestureRecognizer(longPressRecognizer)
         sceneView.isUserInteractionEnabled = true
+        
+        surface.addTarget(self, action: #selector(self.surfaceStateDidChange(_:)), for: .valueChanged)
+        wireframe.addTarget(self, action: #selector(self.wireframeStateDidChange(_:)), for: .valueChanged)
+        hand.addTarget(self, action: #selector(self.handStateDidChange(_:)), for: .valueChanged)
+        
+        hand.setOn(false, animated: true)
+        autostep.setOn(false, animated: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // Create a session configuration
-        let configuration = ARImageTrackingConfiguration()
         
         guard let trackedImages = ARReferenceImage.referenceImages(inGroupNamed: "Photos", bundle: Bundle.main) else {
             print("No images available")
@@ -73,10 +82,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
         configuration.trackingImages = trackedImages
         configuration.maximumNumberOfTrackedImages = 1
-        
-        if #available(iOS 13.0, *) {
-            //configuration.frameSemantics.insert(.personSegmentationWithDepth)
-        }
         
         // Run the view's session
         sceneView.session.run(configuration)
@@ -161,7 +166,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func nextAction(_ node: SCNNode) {
         node.removeAllActions()
-        node.opacity = 0.01
+        node.opacity = 1
         self.currentActionIndex += 1
         
         if (self.currentActionIndex < self.nodes.count) {
@@ -241,6 +246,51 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         } else if (gesture.state == .ended) {
             self.lastActionShift = 0
             print("Action jump disabled!")
+        }
+    }
+    
+    @objc func surfaceStateDidChange(_ sender: UISwitch!) {
+        if (sender.isOn == true) {
+            self.shapeNode.opacity = 1
+            print("Surface rendering is now ON")
+        } else {
+            self.shapeNode.opacity = 0.01
+            print("Surface rendering is now Off")
+        }
+    }
+    
+    @objc func wireframeStateDidChange(_ sender: UISwitch!) {
+        if (sender.isOn == true) {
+            if (self.hand.isOn) {
+                let alert = UIAlertController(title: "Warning", message: "Wireframe rendering does not work while hand occlusion is ON!", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+                    sender.setOn(false, animated: true)
+                }))
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                self.sceneView.debugOptions.insert(SCNDebugOptions.showWireframe)
+                print("Wireframe rendering is now ON")
+            }
+        } else {
+            self.sceneView.debugOptions.remove(SCNDebugOptions.showWireframe)
+            print("Wireframe rendering is now Off")
+        }
+    }
+    
+    @objc func handStateDidChange(_ sender: UISwitch!) {
+        if #available(iOS 13.0, *) {
+            if (sender.isOn == true) {
+                configuration.frameSemantics.insert(.personSegmentationWithDepth)
+                if (self.wireframe.isOn) {
+                    self.wireframe.setOn(false, animated: true)
+                    self.sceneView.debugOptions.remove(SCNDebugOptions.showWireframe)
+                }
+                print("Hand occlusion is now ON")
+            } else {
+                configuration.frameSemantics.remove(.personSegmentationWithDepth)
+                print("Hand occlusion is now Off")
+            }
+            sceneView.session.run(configuration)
         }
     }
     
