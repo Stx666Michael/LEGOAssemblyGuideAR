@@ -17,6 +17,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet weak var surface: UISwitch!
     @IBOutlet weak var wireframe: UISwitch!
     @IBOutlet weak var hand: UISwitch!
+    @IBOutlet weak var previous: UISwitch!
+    @IBOutlet weak var preview: UISwitch!
     @IBOutlet weak var autostep: UISwitch!
     
     var nodes = [SCNNode]()
@@ -67,8 +69,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         surface.addTarget(self, action: #selector(self.surfaceStateDidChange(_:)), for: .valueChanged)
         wireframe.addTarget(self, action: #selector(self.wireframeStateDidChange(_:)), for: .valueChanged)
         hand.addTarget(self, action: #selector(self.handStateDidChange(_:)), for: .valueChanged)
+        previous.addTarget(self, action: #selector(self.previousStateDidChange(_:)), for: .valueChanged)
         
         hand.setOn(false, animated: true)
+        preview.setOn(false, animated: true)
         autostep.setOn(false, animated: true)
     }
     
@@ -169,6 +173,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         node.opacity = 1
         self.currentActionIndex += 1
         
+        if (!self.previous.isOn) {
+            node.isHidden = true
+        }
         if (self.currentActionIndex < self.nodes.count) {
             self.nodes[self.currentActionIndex].isHidden = false
             self.nodes[self.currentActionIndex].runAction(self.animation)
@@ -291,6 +298,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 print("Hand occlusion is now Off")
             }
             sceneView.session.run(configuration)
+        }
+    }
+    
+    @objc func previousStateDidChange(_ sender: UISwitch!) {
+        if (sender.isOn == true) {
+            for node in nodes[...(self.currentActionIndex-1)] {
+                node.isHidden = false
+            }
+            print("Previous steps is now ON")
+        } else {
+            for node in nodes[...(self.currentActionIndex-1)] {
+                node.isHidden = true
+            }
+            print("Previous steps is now Off")
         }
     }
     
