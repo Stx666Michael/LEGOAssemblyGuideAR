@@ -21,19 +21,6 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1112" height="834"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </arscnView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0rp-qM-4vn">
-                                <rect key="frame" x="439" y="40" width="234" height="20.5"/>
-                                <attributedString key="attributedText">
-                                    <fragment content="Please scan marker to start">
-                                        <attributes>
-                                            <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <font key="NSFont" size="18" name="Arial-BoldMT"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                        </attributes>
-                                    </fragment>
-                                </attributedString>
-                                <color key="highlightedColor" systemColor="labelColor"/>
-                            </label>
                             <view contentMode="scaleToFill" id="Vws-B7-8Op">
                                 <rect key="frame" x="0.0" y="693" width="1112" height="106"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
@@ -69,7 +56,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="83B-To-cKE">
-                                        <rect key="frame" x="160" y="68" width="72" height="22"/>
+                                        <rect key="frame" x="161" y="68" width="71" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <attributedString key="attributedText">
                                             <fragment content="Previous">
@@ -115,10 +102,10 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                     </switch>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i9x-az-MkP">
-                                        <rect key="frame" x="434" y="68" width="123" height="22"/>
+                                        <rect key="frame" x="481" y="68" width="69" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <attributedString key="attributedText">
-                                            <fragment content="Upper Preview">
+                                            <fragment content="Preview">
                                                 <attributes>
                                                     <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <font key="NSFont" size="16" name="Arial-BoldMT"/>
@@ -148,13 +135,27 @@
                                     </label>
                                 </subviews>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0rp-qM-4vn">
+                                <rect key="frame" x="439" y="50" width="235" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <attributedString key="attributedText">
+                                    <fragment content="Please scan marker to start">
+                                        <attributes>
+                                            <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <font key="NSFont" size="18" name="Arial-BoldMT"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <color key="highlightedColor" systemColor="labelColor"/>
+                            </label>
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dgf-Zs-ne2">
+                                <rect key="frame" x="151" y="100" width="810" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                            </sceneKitView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="lCh-jn-yCo"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="0rp-qM-4vn" firstAttribute="centerX" secondItem="LM1-dy-ioy" secondAttribute="centerX" id="foX-0P-bgY"/>
-                            <constraint firstItem="0rp-qM-4vn" firstAttribute="top" secondItem="lCh-jn-yCo" secondAttribute="top" constant="20" id="uzc-M7-HXR"/>
-                        </constraints>
                     </view>
                     <connections>
                         <outlet property="autostep" destination="mbX-Vu-OB0" id="1Us-U2-Y6N"/>
@@ -163,6 +164,7 @@
                         <outlet property="preview" destination="8rf-rf-qSA" id="nqe-9s-yZw"/>
                         <outlet property="previous" destination="3kw-Zp-8cS" id="O56-7j-axe"/>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
+                        <outlet property="subSceneView" destination="dgf-Zs-ne2" id="iMO-Lw-OVe"/>
                         <outlet property="surface" destination="ood-q1-9MF" id="LnD-tm-6uT"/>
                         <outlet property="wireframe" destination="MQS-OJ-iKt" id="gbu-Zu-SKJ"/>
                     </connections>

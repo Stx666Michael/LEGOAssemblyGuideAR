@@ -13,13 +13,14 @@ import ARKit
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
-    @IBOutlet weak var currentStep: UILabel!
-    @IBOutlet weak var surface: UISwitch!
-    @IBOutlet weak var wireframe: UISwitch!
-    @IBOutlet weak var hand: UISwitch!
-    @IBOutlet weak var previous: UISwitch!
-    @IBOutlet weak var preview: UISwitch!
-    @IBOutlet weak var autostep: UISwitch!
+    @IBOutlet var subSceneView: SCNView!
+    @IBOutlet var currentStep: UILabel!
+    @IBOutlet var surface: UISwitch!
+    @IBOutlet var wireframe: UISwitch!
+    @IBOutlet var hand: UISwitch!
+    @IBOutlet var previous: UISwitch!
+    @IBOutlet var preview: UISwitch!
+    @IBOutlet var autostep: UISwitch!
     
     var nodes = [SCNNode]()
     var animation = SCNAction()
