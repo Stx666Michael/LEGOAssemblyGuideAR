@@ -36,49 +36,18 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set the view's delegate
+        // Set the view's delegate and show statistics
         sceneView.delegate = self
-        
-        // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
-        // Display wireframe
-        sceneView.debugOptions.insert(SCNDebugOptions.showWireframe)
-        
-        // Create a new scene
+        // Create a new scene and set the scene to view
         let scene = SCNScene(named: "art.scnassets/GameScene.scn")!
-        
-        // Set the scene to the view
         sceneView.scene = scene
         
-        subScene.rootNode.childNodes.first?.removeFromParentNode()
-        
-        """
-        // Set the subscene empty
-        for node in subScene.rootNode.childNodes {
-            node.removeFromParentNode()
-        }
-        
-        // Add camera node to subscene
-        let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
-        //cameraNode.camera?.fieldOfView = 60
-        //cameraNode.camera?.projectionDirection = .horizontal
-        cameraNode.position = SCNVector3(x: 0, y: 10, z: 0)
-        subScene.rootNode.addChildNode(cameraNode)
-        
-        // Add light to subscene
-        let lightNode = SCNNode()
-        lightNode.light = SCNLight()
-        lightNode.light?.type = .ambient
-        subScene.rootNode.addChildNode(lightNode)
-        """
-        
         // Attach subscene to subsceneview
-        subScene.background.contents = UIColor.clear
+        subScene.rootNode.childNodes.first?.removeFromParentNode()
         subSceneView.scene = subScene
-        subSceneView.isHidden = true
-        //subSceneView.allowsCameraControl = true
+        subSceneView.debugOptions.insert(SCNDebugOptions.showWireframe)
         
         // Recognize one finger tap
         let oneTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(oneTapGestureFired(_ :)))
@@ -109,8 +78,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         preview.addTarget(self, action: #selector(self.previewStateDidChange(_:)), for: .valueChanged)
         
         // Setup switch state
+        wireframe.setOn(false, animated: true)
         hand.setOn(false, animated: true)
-        preview.setOn(false, animated: true)
         autostep.setOn(false, animated: true)
     }
     
@@ -147,8 +116,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 
                 self.shapeNode.position = SCNVector3(x: 0, y: 0, z: -10.1)
                 self.shapeNode.eulerAngles.y = -.pi / 2
-                let subviewActionOne = SCNAction.repeatForever(SCNAction.rotateBy(x: 2 * .pi, y: 0, z: 0, duration: 10))
-                //let subviewActionTwo = SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 10))
+                let subviewAction = SCNAction.repeatForever(SCNAction.rotateBy(x: .pi, y: 0, z: .pi, duration: 5))
                 
                 for firstIndex in "abcdef" {
                     for secondIndex in "abcdefghijklmnopqrstuvwxyz" {
@@ -157,9 +125,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                         if nodeToAdd != nil {
                             let nodeClone = nodeToAdd!.clone()
                             nodeClone.position = SCNVector3Zero
-                            nodeClone.eulerAngles.y = .pi / 2
-                            nodeClone.eulerAngles.z = .pi / 2
-                            //nodeClone.runAction(subviewActionOne)
+                            nodeClone.runAction(subviewAction)
                             self.nodesInSubview.append(nodeClone)
                             nodeToAdd!.isHidden = true
                             self.nodes.append(nodeToAdd!)
