@@ -14,6 +14,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet var subSceneView: SCNView!
+    
     @IBOutlet var currentStep: UILabel!
     @IBOutlet var surface: UISwitch!
     @IBOutlet var wireframe: UISwitch!
@@ -23,11 +24,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet var autostep: UISwitch!
     
     var nodes = [SCNNode]()
+    var nodesInSubview = [SCNNode]()
     var animation = SCNAction()
     var currentActionIndex = 0
     var lastActionShift = 0
     var initialPoint = CGPoint()
     var configuration = ARImageTrackingConfiguration()
+    var subScene = SCNScene(named: "art.scnassets/LEGO.scn")!
     var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     
     override func viewDidLoad() {
@@ -39,6 +42,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
+        // Display wireframe
         sceneView.debugOptions.insert(SCNDebugOptions.showWireframe)
         
         // Create a new scene
@@ -47,7 +51,34 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
+        subScene.rootNode.childNodes.first?.removeFromParentNode()
+        
+        """
+        // Set the subscene empty
+        for node in subScene.rootNode.childNodes {
+            node.removeFromParentNode()
+        }
+        
+        // Add camera node to subscene
+        let cameraNode = SCNNode()
+        cameraNode.camera = SCNCamera()
+        //cameraNode.camera?.fieldOfView = 60
+        //cameraNode.camera?.projectionDirection = .horizontal
+        cameraNode.position = SCNVector3(x: 0, y: 10, z: 0)
+        subScene.rootNode.addChildNode(cameraNode)
+        
+        // Add light to subscene
+        let lightNode = SCNNode()
+        lightNode.light = SCNLight()
+        lightNode.light?.type = .ambient
+        subScene.rootNode.addChildNode(lightNode)
+        """
+        
+        // Attach subscene to subsceneview
+        subScene.background.contents = UIColor.clear
+        subSceneView.scene = subScene
         subSceneView.isHidden = true
+        //subSceneView.allowsCameraControl = true
         
         // Recognize one finger tap
         let oneTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(oneTapGestureFired(_ :)))
@@ -64,17 +95,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         longPressRecognizer.numberOfTouchesRequired = 1
         longPressRecognizer.minimumPressDuration = 1
         
+        // Add gesture recognizer
         sceneView.addGestureRecognizer(oneTapRecognizer)
         sceneView.addGestureRecognizer(twoTapRecognizer)
         sceneView.addGestureRecognizer(longPressRecognizer)
         sceneView.isUserInteractionEnabled = true
         
+        // Add switch function
         surface.addTarget(self, action: #selector(self.surfaceStateDidChange(_:)), for: .valueChanged)
         wireframe.addTarget(self, action: #selector(self.wireframeStateDidChange(_:)), for: .valueChanged)
         hand.addTarget(self, action: #selector(self.handStateDidChange(_:)), for: .valueChanged)
         previous.addTarget(self, action: #selector(self.previousStateDidChange(_:)), for: .valueChanged)
         preview.addTarget(self, action: #selector(self.previewStateDidChange(_:)), for: .valueChanged)
         
+        // Setup switch state
         hand.setOn(false, animated: true)
         preview.setOn(false, animated: true)
         autostep.setOn(false, animated: true)
@@ -113,48 +147,35 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 
                 self.shapeNode.position = SCNVector3(x: 0, y: 0, z: -10.1)
                 self.shapeNode.eulerAngles.y = -.pi / 2
+                let subviewActionOne = SCNAction.repeatForever(SCNAction.rotateBy(x: 2 * .pi, y: 0, z: 0, duration: 10))
+                //let subviewActionTwo = SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 10))
                 
                 for firstIndex in "abcdef" {
                     for secondIndex in "abcdefghijklmnopqrstuvwxyz" {
                         let index = String(firstIndex) + String(secondIndex)
-                        if self.shapeNode.childNode(withName: index, recursively: true) != nil {
-                            self.nodes.append(self.shapeNode.childNode(withName: index, recursively: true)!)
+                        let nodeToAdd = self.shapeNode.childNode(withName: index, recursively: true)
+                        if nodeToAdd != nil {
+                            let nodeClone = nodeToAdd!.clone()
+                            nodeClone.position = SCNVector3Zero
+                            nodeClone.eulerAngles.y = .pi / 2
+                            nodeClone.eulerAngles.z = .pi / 2
+                            //nodeClone.runAction(subviewActionOne)
+                            self.nodesInSubview.append(nodeClone)
+                            nodeToAdd!.isHidden = true
+                            self.nodes.append(nodeToAdd!)
                         }
                     }
                 }
                 
-                let level1 = self.shapeNode.childNode(withName: "L1", recursively: true)
-                let level2 = self.shapeNode.childNode(withName: "L2", recursively: true)
-                let level3 = self.shapeNode.childNode(withName: "L3", recursively: true)
-                let ng = self.shapeNode.childNode(withName: "NG", recursively: true)
-                let nc = self.shapeNode.childNode(withName: "NC", recursively: true)
-                let bb = self.shapeNode.childNode(withName: "BB", recursively: true)
-                let le = self.shapeNode.childNode(withName: "LE", recursively: true)
-                let lb = self.shapeNode.childNode(withName: "LB", recursively: true)
-                
-                let levels = [level1, level2, level3]
-                let buildings = [ng, nc, bb, le, lb]
-                
-                for level in levels {
-                    for node in level!.childNodes.shuffled() {
-                        node.isHidden = true
-                    }
-                }
-                
-                for building in buildings {
-                    for node in building!.childNodes.shuffled() {
-                        node.isHidden = true
-                    }
-                }
-                
                 let duration = 0.5
-                
                 let fadeOut = SCNAction.fadeOpacity(by: -2, duration: duration)
                 let fadeIn = SCNAction.fadeOpacity(by: 1, duration: duration)
                 self.animation = SCNAction.repeatForever(SCNAction.sequence([fadeOut, fadeIn]))
                 
                 self.nodes.first?.isHidden = false
                 self.nodes.first?.runAction(self.animation)
+                
+                self.subScene.rootNode.addChildNode(self.nodesInSubview.first!)
                 
                 self.updateStepText()
                 
@@ -172,9 +193,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    func nextAction(_ node: SCNNode) {
+    func nextAction(node: SCNNode, previewNode: SCNNode) {
         node.removeAllActions()
         node.opacity = 1
+        previewNode.removeFromParentNode()
         self.currentActionIndex += 1
         
         if (!self.previous.isOn) {
@@ -183,27 +205,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         if (self.currentActionIndex < self.nodes.count) {
             self.nodes[self.currentActionIndex].isHidden = false
             self.nodes[self.currentActionIndex].runAction(self.animation)
+            self.subScene.rootNode.addChildNode(nodesInSubview[self.currentActionIndex])
             self.updateStepText()
         } else {
             self.currentStep.text = "Construction done!"
-            //self.shapeNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 10)))
         }
     }
     
-    func prevAction(_ node: SCNNode) {
+    func prevAction(node: SCNNode, previewNode: SCNNode) {
         node.removeAllActions()
         node.opacity = 1
         node.isHidden = true
+        previewNode.removeFromParentNode()
         self.currentActionIndex -= 1
         self.nodes[self.currentActionIndex].opacity = 1
         self.nodes[self.currentActionIndex].isHidden = false
         self.nodes[self.currentActionIndex].runAction(self.animation)
+        self.subScene.rootNode.addChildNode(nodesInSubview[self.currentActionIndex])
         self.updateStepText()
     }
     
     func tryNextAction() {
         if (self.currentActionIndex < self.nodes.count) {
-            self.nextAction(nodes[self.currentActionIndex])
+            self.nextAction(node: nodes[self.currentActionIndex], previewNode: nodesInSubview[self.currentActionIndex])
             print(self.currentActionIndex)
         } else {
             print("No more steps!")
@@ -213,10 +237,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func tryPrevAction() {
         if (self.currentActionIndex == self.nodes.count && self.nodes.count > 0) {
             //print("Assembly finished!")
-            self.prevAction(nodes[self.currentActionIndex-1])
+            self.prevAction(node: nodes[self.currentActionIndex-1], previewNode: nodesInSubview[self.currentActionIndex-1])
             print(self.currentActionIndex)
         } else if (self.currentActionIndex > 0) {
-            self.prevAction(nodes[self.currentActionIndex])
+            self.prevAction(node: nodes[self.currentActionIndex], previewNode: nodesInSubview[self.currentActionIndex])
             print(self.currentActionIndex)
         } else {
             print("No previous steps!")
@@ -236,7 +260,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             self.initialPoint = gesture.location(in: view.superview)
             print("Action jump enabled!")
             self.currentStep.text = "Drag left / right to change steps"
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {self.updateStepText()}
         } else if (gesture.state == .changed) {
             let currentPoint = gesture.location(in: view.superview)
             let dragDistanceX = currentPoint.x - initialPoint.x
@@ -255,6 +278,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 }
             }
         } else if (gesture.state == .ended) {
+            self.updateStepText()
             self.lastActionShift = 0
             print("Action jump disabled!")
         }
@@ -273,8 +297,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @objc func wireframeStateDidChange(_ sender: UISwitch!) {
         if (sender.isOn == true) {
             if (self.hand.isOn) {
-                let alert = UIAlertController(title: "Warning", message: "Wireframe rendering does not work while hand occlusion is ON!", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+                let alert = UIAlertController(title: "Warning", message: "Wireframe rendering does not work while hand occlusion is ON", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
                     sender.setOn(false, animated: true)
                 }))
                 self.present(alert, animated: true, completion: nil)
