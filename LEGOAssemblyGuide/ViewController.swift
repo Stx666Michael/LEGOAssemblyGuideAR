@@ -159,6 +159,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
+    func get2DBoundingBoxInScreen(node: SCNNode) {
+        let boundingBoxMin = node.convertPosition(node.boundingBox.min, to: nil)
+        let boundingBoxMax = node.convertPosition(node.boundingBox.max, to: nil)
+        let bbMinOnScreen = self.sceneView.projectPoint(boundingBoxMin)
+        let bbMaxOnScreen = self.sceneView.projectPoint(boundingBoxMax)
+        let windowSize = self.sceneView.frame
+        let bbWidth = abs(bbMinOnScreen.x - bbMaxOnScreen.x)
+        let bbHeight = abs(bbMinOnScreen.y - bbMaxOnScreen.y)
+        print(bbMinOnScreen.x, bbMinOnScreen.y)
+        print(bbMaxOnScreen.x, bbMaxOnScreen.y)
+        
+        let cropRect = CGRectMake(CGFloat(min(bbMinOnScreen.x, bbMaxOnScreen.x)*2),
+                                  (windowSize.height - CGFloat(max(bbMinOnScreen.y, bbMaxOnScreen.y)))*2,
+                                  CGFloat(bbWidth*2),
+                                  CGFloat(bbHeight*2))
+        
+        let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)!
+        let imageView = UIImageView(image: UIImage(cgImage: image))
+        imageView.frame = CGRect(x: 0, y: 0, width: CGFloat(bbWidth*2), height: CGFloat(bbHeight*2))
+        self.sceneView.addSubview(imageView)
+    }
+    
     func nextAction(node: SCNNode, previewNode: SCNNode) {
         node.removeAllActions()
         node.opacity = 1
@@ -173,6 +195,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             self.nodes[self.currentActionIndex].runAction(self.animation)
             self.subScene.rootNode.addChildNode(nodesInSubview[self.currentActionIndex])
             self.updateStepText()
+            //get2DBoundingBoxInScreen(node: self.nodes[self.currentActionIndex])
         } else {
             self.currentStep.text = "Construction done!"
         }
