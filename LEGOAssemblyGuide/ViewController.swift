@@ -38,7 +38,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Set the view's delegate and show statistics
         sceneView.delegate = self
-        sceneView.showsStatistics = true
+        //sceneView.showsStatistics = true
         
         // Create a new scene and set the scene to view
         let scene = SCNScene(named: "art.scnassets/GameScene.scn")!
@@ -183,10 +183,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func nextAction(node: SCNNode, previewNode: SCNNode) {
         node.removeAllActions()
-        node.opacity = 1
         previewNode.removeFromParentNode()
         self.currentActionIndex += 1
         
+        if (self.surface.isOn) {
+            node.opacity = 1
+        } else {
+            node.opacity = 0.01
+        }
         if (!self.previous.isOn) {
             node.isHidden = true
         }
@@ -275,10 +279,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @objc func surfaceStateDidChange(_ sender: UISwitch!) {
         if (sender.isOn == true) {
-            self.shapeNode.opacity = 1
+            for node in nodes[...(self.currentActionIndex-1)] {
+                node.opacity = 1
+            }
             print("Surface rendering is now ON")
         } else {
-            self.shapeNode.opacity = 0.01
+            for node in nodes[...(self.currentActionIndex-1)] {
+                node.opacity = 0.01
+            }
             print("Surface rendering is now Off")
         }
     }
