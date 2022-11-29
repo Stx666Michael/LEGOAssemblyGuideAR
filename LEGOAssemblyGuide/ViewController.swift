@@ -9,7 +9,9 @@
 import UIKit
 import SceneKit
 import ARKit
+import CreateMLComponents
 
+@available(iOS 13.0.0, *)
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
@@ -32,6 +34,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var configuration = ARImageTrackingConfiguration()
     var subScene = SCNScene(named: "art.scnassets/LEGO.scn")!
     var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
+    var autoStepTimer = Timer()
+    var tempView = UIImageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,6 +80,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         hand.addTarget(self, action: #selector(self.handStateDidChange(_:)), for: .valueChanged)
         previous.addTarget(self, action: #selector(self.previousStateDidChange(_:)), for: .valueChanged)
         preview.addTarget(self, action: #selector(self.previewStateDidChange(_:)), for: .valueChanged)
+        autostep.addTarget(self, action: #selector(self.autostepStateDidChange(_:)), for: .valueChanged)
         
         // Setup switch state
         wireframe.setOn(false, animated: true)
@@ -134,8 +139,23 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 }
                 
                 let duration = 0.5
-                let fadeOut = SCNAction.fadeOpacity(by: -2, duration: duration)
-                let fadeIn = SCNAction.fadeOpacity(by: 1, duration: duration)
+                //let fadeOut = SCNAction.fadeOpacity(by: -2, duration: duration)
+                //let fadeIn = SCNAction.fadeOpacity(by: 1, duration: duration)
+                
+                let fadeOut = SCNAction.customAction(duration: duration) { (node, elapsedTime) in
+                    if (elapsedTime == 0) {
+                        //self.stepDetection(node: node)
+                    }
+                    node.opacity = 1 - elapsedTime * 2 / duration
+                }
+                
+                let fadeIn = SCNAction.customAction(duration: duration) { (node, elapsedTime) in
+                    if (elapsedTime == 0) {
+                        //self.stepDetection(node: node)
+                    }
+                    node.opacity = elapsedTime / duration
+                }
+                
                 self.animation = SCNAction.repeatForever(SCNAction.sequence([fadeOut, fadeIn]))
                 
                 self.nodes.first?.isHidden = false
@@ -159,26 +179,49 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    func get2DBoundingBoxInScreen(node: SCNNode) {
+    func featureprintObservationForImage(image: CGImage) -> VNFeaturePrintObservation? {
+        let requestHandler = VNImageRequestHandler(cgImage: image)
+        let request = VNGenerateImageFeaturePrintRequest()
+        do {
+            try requestHandler.perform([request])
+            return request.results?.first as? VNFeaturePrintObservation
+        } catch {
+            print("Vision error: \(error)")
+            return nil
+        }
+    }
+    
+    func stepDetection(node: SCNNode) {
         let boundingBoxMin = node.convertPosition(node.boundingBox.min, to: nil)
         let boundingBoxMax = node.convertPosition(node.boundingBox.max, to: nil)
         let bbMinOnScreen = self.sceneView.projectPoint(boundingBoxMin)
         let bbMaxOnScreen = self.sceneView.projectPoint(boundingBoxMax)
         let windowSize = self.sceneView.frame
-        let bbWidth = abs(bbMinOnScreen.x - bbMaxOnScreen.x)
-        let bbHeight = abs(bbMinOnScreen.y - bbMaxOnScreen.y)
-        print(bbMinOnScreen.x, bbMinOnScreen.y)
-        print(bbMaxOnScreen.x, bbMaxOnScreen.y)
+        let bbWidth = max(abs(bbMinOnScreen.x - bbMaxOnScreen.x), 20)
+        let bbHeight = max(abs(bbMinOnScreen.y - bbMaxOnScreen.y), 20)
+        //print(bbMinOnScreen.x, bbMinOnScreen.y)
+        //print(bbMaxOnScreen.x, bbMaxOnScreen.y)
         
         let cropRect = CGRectMake(CGFloat(min(bbMinOnScreen.x, bbMaxOnScreen.x)*2),
                                   (windowSize.height - CGFloat(max(bbMinOnScreen.y, bbMaxOnScreen.y)))*2,
                                   CGFloat(bbWidth*2),
                                   CGFloat(bbHeight*2))
         
-        let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)!
-        let imageView = UIImageView(image: UIImage(cgImage: image))
-        imageView.frame = CGRect(x: 0, y: 0, width: CGFloat(bbWidth*2), height: CGFloat(bbHeight*2))
-        self.sceneView.addSubview(imageView)
+        //let defaultConfig = MLModelConfiguration()
+        //let model = try? MobileNetV2(configuration: defaultConfig).model
+        //let featureExtractor = try? MLModelImageFeatureExtractor(model: model!, outputName: "output")
+        //let featureExtractor = ImageFeaturePrint()
+        let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)
+        if (image != nil) {
+            //let output = try? await featureExtractor.applied(to: CIImage(cgImage: image), eventHandler: nil)
+            //let output = featureprintObservationForImage(image: image!)
+            //print(output?.elementCount ?? 1)
+            //print(output?.data ?? 1)
+            self.tempView.removeFromSuperview()
+            self.tempView = UIImageView(image: UIImage(cgImage: image!))
+            self.tempView.frame = CGRect(x: 50, y: 50, width: CGFloat(bbWidth*2), height: CGFloat(bbHeight*2))
+            self.sceneView.addSubview(self.tempView)
+        }
     }
     
     func nextAction(node: SCNNode, previewNode: SCNNode) {
@@ -199,7 +242,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             self.nodes[self.currentActionIndex].runAction(self.animation)
             self.subScene.rootNode.addChildNode(nodesInSubview[self.currentActionIndex])
             self.updateStepText()
-            //get2DBoundingBoxInScreen(node: self.nodes[self.currentActionIndex])
         } else {
             self.currentStep.text = "Construction done!"
         }
@@ -310,20 +352,18 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     @objc func handStateDidChange(_ sender: UISwitch!) {
-        if #available(iOS 13.0, *) {
-            if (sender.isOn == true) {
-                configuration.frameSemantics.insert(.personSegmentationWithDepth)
-                if (self.wireframe.isOn) {
-                    self.wireframe.setOn(false, animated: true)
-                    self.sceneView.debugOptions.remove(SCNDebugOptions.showWireframe)
-                }
-                print("Hand occlusion is now ON")
-            } else {
-                configuration.frameSemantics.remove(.personSegmentationWithDepth)
-                print("Hand occlusion is now Off")
+        if (sender.isOn == true) {
+            configuration.frameSemantics.insert(.personSegmentationWithDepth)
+            if (self.wireframe.isOn) {
+                self.wireframe.setOn(false, animated: true)
+                self.sceneView.debugOptions.remove(SCNDebugOptions.showWireframe)
             }
-            sceneView.session.run(configuration)
+            print("Hand occlusion is now ON")
+        } else {
+            configuration.frameSemantics.remove(.personSegmentationWithDepth)
+            print("Hand occlusion is now Off")
         }
+        sceneView.session.run(configuration)
     }
     
     @objc func previousStateDidChange(_ sender: UISwitch!) {
@@ -347,6 +387,19 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         } else {
             self.subSceneView.isHidden = true
             print("Preview is now Off")
+        }
+    }
+    
+    @objc func autostepStateDidChange(_ sender: UISwitch!) {
+        if (sender.isOn == true) {
+            self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { _ in
+                self.stepDetection(node: self.nodes[self.currentActionIndex])
+            })
+            print("Auto step is now ON")
+        } else {
+            self.tempView.removeFromSuperview()
+            self.autoStepTimer.invalidate()
+            print("Auto step is now Off")
         }
     }
     
