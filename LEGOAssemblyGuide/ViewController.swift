@@ -35,6 +35,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var subScene = SCNScene(named: "art.scnassets/LEGO.scn")!
     var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     var autoStepTimer = Timer()
+    var featurePrint = VNFeaturePrintObservation()
     var tempView = UIImageView()
     
     override func viewDidLoad() {
@@ -119,8 +120,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         DispatchQueue.main.async {
             if anchor is ARImageAnchor {
                 
-                self.shapeNode.position = SCNVector3(x: 0, y: 0, z: -10.1)
-                self.shapeNode.eulerAngles.y = -.pi / 2
+                self.shapeNode.position = SCNVector3(x: -10, y: 0, z: 0)
+                //self.shapeNode.eulerAngles.y = -.pi / 2
                 let subviewAction = SCNAction.repeatForever(SCNAction.rotateBy(x: .pi, y: 0, z: .pi, duration: 5))
                 
                 for firstIndex in "abcdef" {
@@ -139,9 +140,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 }
                 
                 let duration = 0.5
-                //let fadeOut = SCNAction.fadeOpacity(by: -2, duration: duration)
-                //let fadeIn = SCNAction.fadeOpacity(by: 1, duration: duration)
-                
+                let fadeOut = SCNAction.fadeOpacity(by: -2, duration: duration)
+                let fadeIn = SCNAction.fadeOpacity(by: 1, duration: duration)
+                /*
                 let fadeOut = SCNAction.customAction(duration: duration) { (node, elapsedTime) in
                     if (elapsedTime == 0) {
                         //self.stepDetection(node: node)
@@ -155,7 +156,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     }
                     node.opacity = elapsedTime / duration
                 }
-                
+                */
                 self.animation = SCNAction.repeatForever(SCNAction.sequence([fadeOut, fadeIn]))
                 
                 self.nodes.first?.isHidden = false
@@ -191,7 +192,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    func stepDetection(node: SCNNode) {
+    func stepDetection() {
+        let node = self.nodes[self.currentActionIndex]
         let boundingBoxMin = node.convertPosition(node.boundingBox.min, to: nil)
         let boundingBoxMax = node.convertPosition(node.boundingBox.max, to: nil)
         let bbMinOnScreen = self.sceneView.projectPoint(boundingBoxMin)
@@ -210,17 +212,26 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         //let defaultConfig = MLModelConfiguration()
         //let model = try? MobileNetV2(configuration: defaultConfig).model
         //let featureExtractor = try? MLModelImageFeatureExtractor(model: model!, outputName: "output")
-        //let featureExtractor = ImageFeaturePrint()
-        let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)
-        if (image != nil) {
-            //let output = try? await featureExtractor.applied(to: CIImage(cgImage: image), eventHandler: nil)
-            //let output = featureprintObservationForImage(image: image!)
-            //print(output?.elementCount ?? 1)
-            //print(output?.data ?? 1)
-            self.tempView.removeFromSuperview()
-            self.tempView = UIImageView(image: UIImage(cgImage: image!))
-            self.tempView.frame = CGRect(x: 50, y: 50, width: CGFloat(bbWidth*2), height: CGFloat(bbHeight*2))
-            self.sceneView.addSubview(self.tempView)
+        if #available(iOS 16.0, *) {
+            //let featureExtractor = ImageFeaturePrint()
+            let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)
+            if (image != nil) {
+                //let output = try? await featureExtractor.applied(to: CIImage(cgImage: image!), eventHandler: nil)
+                let output = featureprintObservationForImage(image: image!)
+                let pointer = UnsafeMutablePointer<Float>.allocate(capacity: 1)
+                //print(output?.elementCount ?? 1)
+                //print(output?.data ?? 1)
+                try? output?.computeDistance(pointer, to: self.featurePrint)
+                print(pointer.pointee)
+                self.featurePrint = output!
+                //print(output?.shape ?? 0)
+                self.tempView.removeFromSuperview()
+                self.tempView = UIImageView(image: UIImage(cgImage: image!))
+                self.tempView.frame = CGRect(x: 50, y: 50, width: CGFloat(bbWidth*2), height: CGFloat(bbHeight*2))
+                self.sceneView.addSubview(self.tempView)
+            }
+        } else {
+            // Fallback on earlier versions
         }
     }
     
@@ -393,7 +404,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @objc func autostepStateDidChange(_ sender: UISwitch!) {
         if (sender.isOn == true) {
             self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { _ in
-                self.stepDetection(node: self.nodes[self.currentActionIndex])
+                self.stepDetection()
             })
             print("Auto step is now ON")
         } else {

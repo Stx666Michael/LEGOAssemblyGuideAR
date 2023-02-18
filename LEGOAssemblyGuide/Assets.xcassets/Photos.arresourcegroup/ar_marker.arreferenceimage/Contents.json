@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "Anchor_G.png",
+      "filename" : "ar_marker.png",
       "idiom" : "universal"
     }
   ],
@@ -10,6 +10,6 @@
     "version" : 1
   },
   "properties" : {
-    "width" : 20.5
+    "width" : 5.75
   }
 }
