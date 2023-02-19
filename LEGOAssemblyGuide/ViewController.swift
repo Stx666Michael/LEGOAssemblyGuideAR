@@ -36,6 +36,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     var autoStepTimer = Timer()
     var featurePrint = VNFeaturePrintObservation()
+    var imageSimilarity: [Float] = []
     var tempView = UIImageView()
     
     override func viewDidLoad() {
@@ -222,9 +223,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 //print(output?.elementCount ?? 1)
                 //print(output?.data ?? 1)
                 try? output?.computeDistance(pointer, to: self.featurePrint)
-                print(pointer.pointee)
+                self.imageSimilarity.append(pointer.pointee)
                 self.featurePrint = output!
-                //print(output?.shape ?? 0)
                 self.tempView.removeFromSuperview()
                 self.tempView = UIImageView(image: UIImage(cgImage: image!))
                 self.tempView.frame = CGRect(x: 50, y: 50, width: CGFloat(bbWidth*2), height: CGFloat(bbHeight*2))
@@ -403,8 +403,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @objc func autostepStateDidChange(_ sender: UISwitch!) {
         if (sender.isOn == true) {
-            self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true, block: { _ in
+            /*var isLowOpacityDetected = false
+            var isHighOpacityDetected = false
+            self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { _ in
+                //print(self.nodes[self.currentActionIndex].opacity)
+                if (self.nodes[self.currentActionIndex].opacity == 0 && !isLowOpacityDetected) {
+                    self.stepDetection()
+                    isLowOpacityDetected = true
+                    isHighOpacityDetected = false
+                } else if (self.nodes[self.currentActionIndex].opacity >= 0.9 && !isHighOpacityDetected) {
+                    self.stepDetection()
+                    isLowOpacityDetected = false
+                    isHighOpacityDetected = true
+                }
+            })*/
+            let timeInterval = 0.2
+            self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
                 self.stepDetection()
+                if (self.imageSimilarity.count == Int(1/timeInterval)) {
+                    print(self.imageSimilarity)
+                    print(self.imageSimilarity.reduce(0, +))
+                    self.imageSimilarity.removeAll()
+                }
             })
             print("Auto step is now ON")
         } else {
