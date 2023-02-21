@@ -24,6 +24,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet var previous: UISwitch!
     @IBOutlet var preview: UISwitch!
     @IBOutlet var autostep: UISwitch!
+    @IBOutlet var prediction: UILabel!
     
     var nodes = [SCNNode]()
     var nodesInSubview = [SCNNode]()
@@ -87,6 +88,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         wireframe.setOn(false, animated: true)
         hand.setOn(false, animated: true)
         autostep.setOn(false, animated: true)
+        self.prediction.isHidden = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -169,8 +171,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let resizedImage = UIImage(cgImage: image).resizeImageTo(size: CGSize(width: 299, height: 299))
         guard let imageBuffer = resizedImage?.convertToBuffer() else { return }
         let stepPrediction = try? self.model?.prediction(image: imageBuffer)
-        print(stepPrediction?.classLabel ?? "Unknown")
-        print(stepPrediction?.classLabelProbs ?? 0)
+        let label = stepPrediction?.classLabel
+        let probability = stepPrediction?.classLabelProbs
+        self.prediction.text = label! + ": " + String(format: "%.2f", probability![label!]!)
+        print(label ?? "Unknown")
+        print(probability ?? 0)
     }
     
     func displayCurrentStepInSubview(image: CGImage, width: Float, height: Float) {
@@ -382,12 +387,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @objc func autostepStateDidChange(_ sender: UISwitch!) {
         if (sender.isOn == true) {
+            self.prediction.isHidden = false
             let timeInterval = 0.2
             self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
                 self.stepDetection()
             })
             print("Auto step is now ON")
         } else {
+            self.prediction.isHidden = true
             self.tempView.removeFromSuperview()
             self.autoStepTimer.invalidate()
             print("Auto step is now Off")
