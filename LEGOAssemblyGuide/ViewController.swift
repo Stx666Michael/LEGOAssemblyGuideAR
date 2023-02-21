@@ -35,8 +35,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var subScene = SCNScene(named: "art.scnassets/LEGO.scn")!
     var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     var autoStepTimer = Timer()
-    var featurePrint: [VNFeaturePrintObservation] = []
-    var imageSimilarity: [Float] = []
     var model = try? LEGOStepClassifier(configuration: MLModelConfiguration())
     var tempView = UIImageView()
     
@@ -159,25 +157,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return node
     }
     
-    func standardDeviation(array: [Float]) -> Float {
-        let average = array.reduce(0, +) / Float(array.count)
-        var squareSum = Float(0)
-        for value in array {
-            squareSum += pow(value-average, 2)
-        }
-        return pow(squareSum, 0.5)
-    }
-    
-    func computeImageSimilarity() {
-        let pointer = UnsafeMutablePointer<Float>.allocate(capacity: 1)
-        for i in 0...self.featurePrint.count-2 {
-            for j in i+1...self.featurePrint.count-1 {
-                try? self.featurePrint[i].computeDistance(pointer, to: self.featurePrint[j])
-                self.imageSimilarity.append(pointer.pointee)
-            }
-        }
-    }
-    
     func updateStepText() {
         if (self.currentActionIndex == self.nodes.count) {
             self.currentStep.text = "Construction done!"
@@ -186,19 +165,22 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    func featureprintObservationForImage(image: CGImage) -> VNFeaturePrintObservation? {
-        let requestHandler = VNImageRequestHandler(cgImage: image)
-        let request = VNGenerateImageFeaturePrintRequest()
-        do {
-            try requestHandler.perform([request])
-            return request.results?.first as? VNFeaturePrintObservation
-        } catch {
-            print("Vision error: \(error)")
-            return nil
-        }
+    func modelPrediction(image: CGImage) {
+        let resizedImage = UIImage(cgImage: image).resizeImageTo(size: CGSize(width: 299, height: 299))
+        guard let imageBuffer = resizedImage?.convertToBuffer() else { return }
+        let stepPrediction = try? self.model?.prediction(image: imageBuffer)
+        print(stepPrediction?.classLabel ?? "Unknown")
+        print(stepPrediction?.classLabelProbs ?? 0)
     }
     
-    func stepDetection() {
+    func displayCurrentStepInSubview(image: CGImage, width: Float, height: Float) {
+        self.tempView.removeFromSuperview()
+        self.tempView = UIImageView(image: UIImage(cgImage: image))
+        self.tempView.frame = CGRect(x: 50, y: 50, width: CGFloat(width*2), height: CGFloat(height*2))
+        self.sceneView.addSubview(self.tempView)
+    }
+    
+    func cropCurrentStep() -> (CGRect, Float, Float) {
         let node = self.nodes[self.currentActionIndex]
         let boundingBoxMin = node.convertPosition(node.boundingBox.min, to: nil)
         let boundingBoxMax = node.convertPosition(node.boundingBox.max, to: nil)
@@ -209,38 +191,23 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let bbHeight = max(abs(bbMinOnScreen.y - bbMaxOnScreen.y), 20)
         //print(bbMinOnScreen.x, bbMinOnScreen.y)
         //print(bbMaxOnScreen.x, bbMaxOnScreen.y)
-        
         let cropRect = CGRectMake(CGFloat(min(bbMinOnScreen.x, bbMaxOnScreen.x)*2),
                                   (windowSize.height - CGFloat(max(bbMinOnScreen.y, bbMaxOnScreen.y)))*2,
                                   CGFloat(bbWidth*2),
                                   CGFloat(bbHeight*2))
+        return (cropRect, bbWidth, bbHeight)
+    }
+    
+    func stepDetection() {
+        let crop = self.cropCurrentStep()
+        let cropRect = crop.0
         
-        //let defaultConfig = MLModelConfiguration()
-        //let model = try? MobileNetV2(configuration: defaultConfig).model
-        //let featureExtractor = try? MLModelImageFeatureExtractor(model: model!, outputName: "output")
         if #available(iOS 16.0, *) {
-            //let featureExtractor = ImageFeaturePrint()
             let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)
             if (image != nil) {
-                let resizedImage = UIImage(cgImage: image!).resizeImageTo(size: CGSize(width: 299, height: 299))
-                guard let imageBuffer = resizedImage?.convertToBuffer() else { return }
-                let stepPrediction = try? self.model?.prediction(image: imageBuffer)
-                print(stepPrediction?.classLabel ?? "Unknown")
-                print(stepPrediction?.classLabelProbs ?? 0)
-                
+                self.modelPrediction(image: image!)
                 //UIImageWriteToSavedPhotosAlbum(UIImage(cgImage: image!), nil, nil, nil)
-                //let output = try? await featureExtractor.applied(to: CIImage(cgImage: image!), eventHandler: nil)
-                //let output = featureprintObservationForImage(image: image!)
-                //let pointer = UnsafeMutablePointer<Float>.allocate(capacity: 1)
-                //print(output?.elementCount ?? 1)
-                //print(output?.data ?? 1)
-                //try? output?.computeDistance(pointer, to: self.featurePrint)
-                //self.imageSimilarity.append(pointer.pointee)
-                //self.featurePrint.append(output!)
-                self.tempView.removeFromSuperview()
-                self.tempView = UIImageView(image: UIImage(cgImage: image!))
-                self.tempView.frame = CGRect(x: 50, y: 50, width: CGFloat(bbWidth*2), height: CGFloat(bbHeight*2))
-                self.sceneView.addSubview(self.tempView)
+                //self.displayCurrentStepInSubview(image: image!, width: crop.1, height: crop.2)
             }
         } else {
             // Fallback on earlier versions
@@ -418,14 +385,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let timeInterval = 0.2
             self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
                 self.stepDetection()
-                /*if (self.featurePrint.count == Int(1/timeInterval)) {
-                    self.computeImageSimilarity()
-                    print(self.imageSimilarity)
-                    print(self.imageSimilarity.reduce(0, +))
-                    print(self.standardDeviation(array: self.imageSimilarity))
-                    self.imageSimilarity.removeAll()
-                    self.featurePrint.removeAll()
-                }*/
             })
             print("Auto step is now ON")
         } else {
