@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  LEGOAssemblyGuide
 //
-//  Created by Tianxiang Song on 10.05.22.
+//  Created by Tianxiang Song on 05/10/22.
 //  Copyright © 2022 Tianxiang Song. All rights reserved.
 //
 

@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  LEGOAssemblyGuide
 //
-//  Created by Tianxiang Song on 10.05.22.
+//  Created by Tianxiang Song on 05/10/22.
 //  Copyright © 2022 Tianxiang Song. All rights reserved.
 //
 
@@ -35,8 +35,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var subScene = SCNScene(named: "art.scnassets/LEGO.scn")!
     var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     var autoStepTimer = Timer()
-    var featurePrint = VNFeaturePrintObservation()
+    var featurePrint: [VNFeaturePrintObservation] = []
     var imageSimilarity: [Float] = []
+    var model = try? LEGOStepClassifier(configuration: MLModelConfiguration())
     var tempView = UIImageView()
     
     override func viewDidLoad() {
@@ -143,21 +144,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 let duration = 0.5
                 let fadeOut = SCNAction.fadeOpacity(by: -2, duration: duration)
                 let fadeIn = SCNAction.fadeOpacity(by: 1, duration: duration)
-                /*
-                let fadeOut = SCNAction.customAction(duration: duration) { (node, elapsedTime) in
-                    if (elapsedTime == 0) {
-                        //self.stepDetection(node: node)
-                    }
-                    node.opacity = 1 - elapsedTime * 2 / duration
-                }
-                
-                let fadeIn = SCNAction.customAction(duration: duration) { (node, elapsedTime) in
-                    if (elapsedTime == 0) {
-                        //self.stepDetection(node: node)
-                    }
-                    node.opacity = elapsedTime / duration
-                }
-                */
                 self.animation = SCNAction.repeatForever(SCNAction.sequence([fadeOut, fadeIn]))
                 
                 self.nodes.first?.isHidden = false
@@ -171,6 +157,25 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             }
         }
         return node
+    }
+    
+    func standardDeviation(array: [Float]) -> Float {
+        let average = array.reduce(0, +) / Float(array.count)
+        var squareSum = Float(0)
+        for value in array {
+            squareSum += pow(value-average, 2)
+        }
+        return pow(squareSum, 0.5)
+    }
+    
+    func computeImageSimilarity() {
+        let pointer = UnsafeMutablePointer<Float>.allocate(capacity: 1)
+        for i in 0...self.featurePrint.count-2 {
+            for j in i+1...self.featurePrint.count-1 {
+                try? self.featurePrint[i].computeDistance(pointer, to: self.featurePrint[j])
+                self.imageSimilarity.append(pointer.pointee)
+            }
+        }
     }
     
     func updateStepText() {
@@ -217,14 +222,21 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             //let featureExtractor = ImageFeaturePrint()
             let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)
             if (image != nil) {
+                let resizedImage = UIImage(cgImage: image!).resizeImageTo(size: CGSize(width: 299, height: 299))
+                guard let imageBuffer = resizedImage?.convertToBuffer() else { return }
+                let stepPrediction = try? self.model?.prediction(image: imageBuffer)
+                print(stepPrediction?.classLabel ?? "Unknown")
+                print(stepPrediction?.classLabelProbs ?? 0)
+                
+                //UIImageWriteToSavedPhotosAlbum(UIImage(cgImage: image!), nil, nil, nil)
                 //let output = try? await featureExtractor.applied(to: CIImage(cgImage: image!), eventHandler: nil)
-                let output = featureprintObservationForImage(image: image!)
-                let pointer = UnsafeMutablePointer<Float>.allocate(capacity: 1)
+                //let output = featureprintObservationForImage(image: image!)
+                //let pointer = UnsafeMutablePointer<Float>.allocate(capacity: 1)
                 //print(output?.elementCount ?? 1)
                 //print(output?.data ?? 1)
-                try? output?.computeDistance(pointer, to: self.featurePrint)
-                self.imageSimilarity.append(pointer.pointee)
-                self.featurePrint = output!
+                //try? output?.computeDistance(pointer, to: self.featurePrint)
+                //self.imageSimilarity.append(pointer.pointee)
+                //self.featurePrint.append(output!)
                 self.tempView.removeFromSuperview()
                 self.tempView = UIImageView(image: UIImage(cgImage: image!))
                 self.tempView.frame = CGRect(x: 50, y: 50, width: CGFloat(bbWidth*2), height: CGFloat(bbHeight*2))
@@ -403,28 +415,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @objc func autostepStateDidChange(_ sender: UISwitch!) {
         if (sender.isOn == true) {
-            /*var isLowOpacityDetected = false
-            var isHighOpacityDetected = false
-            self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { _ in
-                //print(self.nodes[self.currentActionIndex].opacity)
-                if (self.nodes[self.currentActionIndex].opacity == 0 && !isLowOpacityDetected) {
-                    self.stepDetection()
-                    isLowOpacityDetected = true
-                    isHighOpacityDetected = false
-                } else if (self.nodes[self.currentActionIndex].opacity >= 0.9 && !isHighOpacityDetected) {
-                    self.stepDetection()
-                    isLowOpacityDetected = false
-                    isHighOpacityDetected = true
-                }
-            })*/
             let timeInterval = 0.2
             self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
                 self.stepDetection()
-                if (self.imageSimilarity.count == Int(1/timeInterval)) {
+                /*if (self.featurePrint.count == Int(1/timeInterval)) {
+                    self.computeImageSimilarity()
                     print(self.imageSimilarity)
                     print(self.imageSimilarity.reduce(0, +))
+                    print(self.standardDeviation(array: self.imageSimilarity))
                     self.imageSimilarity.removeAll()
-                }
+                    self.featurePrint.removeAll()
+                }*/
             })
             print("Auto step is now ON")
         } else {
