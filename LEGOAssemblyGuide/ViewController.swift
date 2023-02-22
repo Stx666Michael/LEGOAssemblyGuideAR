@@ -37,6 +37,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var shapeNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
     var autoStepTimer = Timer()
     var model = try? LEGOStepClassifier(configuration: MLModelConfiguration())
+    var stepScore = Double(0)
     var tempView = UIImageView()
     
     override func viewDidLoad() {
@@ -167,15 +168,50 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    func modelPrediction(image: CGImage) {
+    func modelPrediction(image: CGImage) -> [String: Double] {
         let resizedImage = UIImage(cgImage: image).resizeImageTo(size: CGSize(width: 299, height: 299))
-        guard let imageBuffer = resizedImage?.convertToBuffer() else { return }
+        guard let imageBuffer = resizedImage?.convertToBuffer() else { return ["Unknown": 0]}
         let stepPrediction = try? self.model?.prediction(image: imageBuffer)
         let label = stepPrediction?.classLabel
         let probability = stepPrediction?.classLabelProbs
         self.prediction.text = label! + ": " + String(format: "%.2f", probability![label!]!)
-        print(label ?? "Unknown")
-        print(probability ?? 0)
+        //print(label ?? "Unknown")
+        //print(probability ?? 0)
+        return probability ?? ["Unknown": 0]
+    }
+    
+    func calculateStepScore(probability: [String: Double]) {
+        self.stepScore += probability["Finished"]! / 10
+        self.stepScore -= probability["Progressing"]! / 5
+        self.stepScore -= probability["Unfinished"]! / 5
+        if (self.stepScore < 0) {
+            self.stepScore = 0
+        } else if (self.stepScore > 1) {
+            self.stepScore = 1
+        }
+        //print("Step progress: " + String(format: "%.2f", self.stepScore*100) + "%")
+        self.currentStep.text = "Step: " + String(self.currentActionIndex+1) + " / " + String(self.nodes.count) +
+        " - Progress: " + String(format: "%.2f", self.stepScore*100) + "%"
+    }
+    
+    func stepDetection() {
+        let crop = self.cropCurrentStep()
+        let cropRect = crop.0
+        
+        if #available(iOS 16.0, *) {
+            let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)
+            if (image != nil) {
+                let probability = self.modelPrediction(image: image!)
+                self.calculateStepScore(probability: probability)
+                if (self.stepScore == 1) {
+                    self.tryNextAction()
+                }
+                //UIImageWriteToSavedPhotosAlbum(UIImage(cgImage: image!), nil, nil, nil)
+                //self.displayCurrentStepInSubview(image: image!, width: crop.1, height: crop.2)
+            }
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
     func displayCurrentStepInSubview(image: CGImage, width: Float, height: Float) {
@@ -203,26 +239,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return (cropRect, bbWidth, bbHeight)
     }
     
-    func stepDetection() {
-        let crop = self.cropCurrentStep()
-        let cropRect = crop.0
-        
-        if #available(iOS 16.0, *) {
-            let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)
-            if (image != nil) {
-                self.modelPrediction(image: image!)
-                //UIImageWriteToSavedPhotosAlbum(UIImage(cgImage: image!), nil, nil, nil)
-                //self.displayCurrentStepInSubview(image: image!, width: crop.1, height: crop.2)
-            }
-        } else {
-            // Fallback on earlier versions
-        }
-    }
-    
     func nextAction(node: SCNNode, previewNode: SCNNode) {
         node.removeAllActions()
         previewNode.removeFromParentNode()
         self.currentActionIndex += 1
+        self.stepScore = 0
         
         if (self.surface.isOn) {
             node.opacity = 1
@@ -248,6 +269,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         node.isHidden = true
         previewNode.removeFromParentNode()
         self.currentActionIndex -= 1
+        self.stepScore = 0
         self.nodes[self.currentActionIndex].opacity = 1
         self.nodes[self.currentActionIndex].isHidden = false
         self.nodes[self.currentActionIndex].runAction(self.animation)
@@ -388,13 +410,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @objc func autostepStateDidChange(_ sender: UISwitch!) {
         if (sender.isOn == true) {
             self.prediction.isHidden = false
-            let timeInterval = 0.2
+            let timeInterval = 0.3
             self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
                 self.stepDetection()
             })
             print("Auto step is now ON")
         } else {
             self.prediction.isHidden = true
+            self.updateStepText()
             self.tempView.removeFromSuperview()
             self.autoStepTimer.invalidate()
             print("Auto step is now Off")
