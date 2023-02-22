@@ -182,7 +182,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func calculateStepScore(probability: [String: Double]) {
         self.stepScore += probability["Finished"]! / 10
-        self.stepScore -= probability["Progressing"]! / 5
+        self.stepScore -= probability["Progressing"]! / 10
         self.stepScore -= probability["Unfinished"]! / 5
         if (self.stepScore < 0) {
             self.stepScore = 0
