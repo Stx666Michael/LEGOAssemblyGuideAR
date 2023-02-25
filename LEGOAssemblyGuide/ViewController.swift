@@ -143,7 +143,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 }
                 
                 let duration = 0.5
-                let fadeOut = SCNAction.fadeOpacity(by: -2, duration: duration)
+                let fadeOut = SCNAction.fadeOpacity(by: -1, duration: duration)
                 let fadeIn = SCNAction.fadeOpacity(by: 1, duration: duration)
                 self.animation = SCNAction.repeatForever(SCNAction.sequence([fadeOut, fadeIn]))
                 
@@ -181,8 +181,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func calculateStepScore(probability: [String: Double]) {
-        self.stepScore += probability["Finished"]! / 10
-        self.stepScore -= probability["Progressing"]! / 10
+        self.stepScore += probability["Finished"]! / 5
         self.stepScore -= probability["Unfinished"]! / 5
         if (self.stepScore < 0) {
             self.stepScore = 0
@@ -203,14 +202,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             if (image != nil) {
                 let probability = self.modelPrediction(image: image!)
                 self.calculateStepScore(probability: probability)
-                if (self.stepScore == 1) {
-                    self.tryNextAction()
-                }
+                if (self.stepScore == 1) {self.tryNextAction()}
                 //UIImageWriteToSavedPhotosAlbum(UIImage(cgImage: image!), nil, nil, nil)
                 //self.displayCurrentStepInSubview(image: image!, width: crop.1, height: crop.2)
             }
-        } else {
-            // Fallback on earlier versions
         }
     }
     
@@ -410,9 +405,24 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @objc func autostepStateDidChange(_ sender: UISwitch!) {
         if (sender.isOn == true) {
             self.prediction.isHidden = false
-            let timeInterval = 0.3
+            if (!self.wireframe.isOn) {
+                self.wireframe.setOn(true, animated: true)
+                self.sceneView.debugOptions.insert(SCNDebugOptions.showWireframe)
+            }
+            if (self.previous.isOn) {
+                self.previous.setOn(false, animated: true)
+                for node in nodes[...(self.currentActionIndex-1)] {node.isHidden = true}
+            }
+            if (self.preview.isOn) {
+                self.preview.setOn(false, animated: true)
+                self.subSceneView.isHidden = true
+            }
+            let timeInterval = 0.1
             self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
-                self.stepDetection()
+                let opacity = self.nodes[self.currentActionIndex].opacity
+                if (opacity < 0.25 && opacity > 0.05) {
+                    self.stepDetection()
+                }
             })
             print("Auto step is now ON")
         } else {
