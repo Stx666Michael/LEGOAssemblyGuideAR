@@ -127,7 +127,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 //self.shapeNode.eulerAngles.y = -.pi / 2
                 let subviewAction = SCNAction.repeatForever(SCNAction.rotateBy(x: .pi, y: 0, z: .pi, duration: 5))
                 
-                for firstIndex in "abcdef" {
+                for firstIndex in "abcdefghijkl" {
                     for secondIndex in "abcdefghijklmnopqrstuvwxyz" {
                         let index = String(firstIndex) + String(secondIndex)
                         let nodeToAdd = self.shapeNode.childNode(withName: index, recursively: true)
