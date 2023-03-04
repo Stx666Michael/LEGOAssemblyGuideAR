@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		071A122129A459F200029948 /* ImageTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071A122029A459F200029948 /* ImageTools.swift */; };
 		0776910E29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */; };
+		07D7504829B33F3700C1D9B6 /* NodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7504729B33F3700C1D9B6 /* NodeController.swift */; };
+		07D7504A29B37CDF00C1D9B6 /* StepController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7504929B37CDF00C1D9B6 /* StepController.swift */; };
 		527951CE20CC07A000B9119D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527951CD20CC07A000B9119D /* AppDelegate.swift */; };
 		527951D020CC07A000B9119D /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 527951CF20CC07A000B9119D /* art.scnassets */; };
 		527951D220CC07A000B9119D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527951D120CC07A000B9119D /* ViewController.swift */; };
@@ -20,6 +22,8 @@
 /* Begin PBXFileReference section */
 		071A122029A459F200029948 /* ImageTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTools.swift; sourceTree = "<group>"; };
 		0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = LEGOStepClassifier.mlmodel; sourceTree = "<group>"; };
+		07D7504729B33F3700C1D9B6 /* NodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeController.swift; sourceTree = "<group>"; };
+		07D7504929B37CDF00C1D9B6 /* StepController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepController.swift; sourceTree = "<group>"; };
 		527951CA20CC07A000B9119D /* LEGOAssemblyGuide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LEGOAssemblyGuide.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		527951CD20CC07A000B9119D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		527951CF20CC07A000B9119D /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -63,6 +67,8 @@
 				071A122029A459F200029948 /* ImageTools.swift */,
 				527951CD20CC07A000B9119D /* AppDelegate.swift */,
 				527951D120CC07A000B9119D /* ViewController.swift */,
+				07D7504729B33F3700C1D9B6 /* NodeController.swift */,
+				07D7504929B37CDF00C1D9B6 /* StepController.swift */,
 				527951D320CC07A000B9119D /* Main.storyboard */,
 				527951D820CC07A100B9119D /* LaunchScreen.storyboard */,
 				0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */,
@@ -147,9 +153,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				527951D220CC07A000B9119D /* ViewController.swift in Sources */,
+				07D7504829B33F3700C1D9B6 /* NodeController.swift in Sources */,
 				527951CE20CC07A000B9119D /* AppDelegate.swift in Sources */,
 				0776910E29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel in Sources */,
 				071A122129A459F200029948 /* ImageTools.swift in Sources */,
+				07D7504A29B37CDF00C1D9B6 /* StepController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
