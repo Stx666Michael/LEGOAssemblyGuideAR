@@ -333,9 +333,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             }
             let timeInterval = 0.1
             self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
-                let opacity = self.nc.nodes[self.nc.currentActionIndex].opacity
-                if (opacity < 0.25 && opacity > 0.05) {
-                    self.stepDetection()
+                if (self.nc.currentActionIndex < self.nc.nodes.count) {
+                    let opacity = self.nc.nodes[self.nc.currentActionIndex].opacity
+                    if (opacity < 0.25 && opacity > 0.05) {
+                        self.stepDetection()
+                    }
                 }
             })
             print("Auto step is now ON")
