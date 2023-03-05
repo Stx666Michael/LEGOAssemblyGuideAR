@@ -145,7 +145,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @objc func longPressGestureFired(_ gesture: UILongPressGestureRecognizer) {
         guard let view = gesture.view else {return}
         let screenWidth = UIScreen.main.bounds.width
-        let distancePerActionJump = Int(screenWidth) / (self.nc.nodes.count + 1)
+        let distancePerActionJump = max(Int(screenWidth)/(self.nc.nodes.count+1), 1)
         
         if (gesture.state == .began) {
             self.initialPoint = gesture.location(in: view.superview)
