@@ -75,7 +75,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         wireframe.setOn(false, animated: true)
         hand.setOn(false, animated: true)
         autostep.setOn(false, animated: true)
-        self.prediction.isHidden = true
+        prediction.isHidden = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -116,7 +116,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 self.subSceneView.scene = self.nc.subScene
                 self.subSceneView.debugOptions.insert(SCNDebugOptions.showWireframe)
                 
-                self.nc.subScene.rootNode.addChildNode(self.nc.nodesInSubview.first!)
                 self.updateStepText()
                 node.addChildNode(self.nc.rootNode)
             }

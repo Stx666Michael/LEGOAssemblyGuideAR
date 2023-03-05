@@ -21,7 +21,7 @@ class NodeController {
     var stepScore = Double(0)
     
     func initializeNodes() {
-        self.subScene.rootNode.childNodes.first?.removeFromParentNode()
+        self.subScene.rootNode.childNode(withName: "Lego_21034_1_London", recursively: true)?.removeFromParentNode()
         self.rootNode.position = SCNVector3(x: -10, y: 0, z: 0)
         //self.rootNode.eulerAngles.y = -.pi / 2
         let subviewAction = SCNAction.repeatForever(SCNAction.rotateBy(x: .pi, y: 0, z: .pi, duration: 5))
@@ -48,6 +48,7 @@ class NodeController {
         
         self.nodes.first?.isHidden = false
         self.nodes.first?.runAction(self.animation)
+        self.subScene.rootNode.addChildNode(self.nodesInSubview.first!)
     }
     
     func nextAction(node: SCNNode, previewNode: SCNNode, isSurfaceOn: Bool, isPreviousOn: Bool) {
