@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import SceneKit
 import ARKit
+import SceneKit
 
 @available(iOS 13.0.0, *)
 class ViewController: UIViewController, ARSCNViewDelegate {
@@ -26,11 +26,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet var prediction: UILabel!
     
     var nc = NodeController()
+    var sc = StepController()
+    var autoStepTimer = Timer()
     var initialPoint = CGPoint()
     var configuration = ARImageTrackingConfiguration()
-    var autoStepTimer = Timer()
-    var model = try? LEGOStepClassifier(configuration: MLModelConfiguration())
-    var tempView = UIImageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,6 +110,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             if anchor is ARImageAnchor {
                 self.nc = NodeController()
                 self.nc.initializeNodes()
+                self.sc = StepController(nc: self.nc)
                 
                 // Attach subscene to subsceneview
                 self.subSceneView.scene = self.nc.subScene
@@ -130,75 +130,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         } else {
             self.currentStep.text = "Step: " + String(self.nc.currentActionIndex+1) + " / " + String(self.nc.nodes.count)
         }
-    }
-    
-    func modelPrediction(image: CGImage) -> [String: Double] {
-        let resizedImage = UIImage(cgImage: image).resizeImageTo(size: CGSize(width: 299, height: 299))
-        guard let imageBuffer = resizedImage?.convertToBuffer() else { return ["Unknown": 0]}
-        let stepPrediction = try? self.model?.prediction(image: imageBuffer)
-        let label = stepPrediction?.classLabel
-        let probability = stepPrediction?.classLabelProbs
-        self.prediction.text = label! + ": " + String(format: "%.2f", probability![label!]!)
-        //print(label ?? "Unknown")
-        //print(probability ?? 0)
-        return probability ?? ["Unknown": 0]
-    }
-    
-    func calculateStepScore(probability: [String: Double]) {
-        self.nc.stepScore += probability["Finished"]! / 5
-        self.nc.stepScore -= probability["Unfinished"]! / 5
-        if (self.nc.stepScore < 0) {
-            self.nc.stepScore = 0
-        } else if (self.nc.stepScore > 1) {
-            self.nc.stepScore = 1
-        }
-        //print("Step progress: " + String(format: "%.2f", self.stepScore*100) + "%")
-        self.currentStep.text = "Step: " + String(self.nc.currentActionIndex+1) + " / " + String(self.nc.nodes.count) +
-        " - Progress: " + String(format: "%.2f", self.nc.stepScore*100) + "%"
-    }
-    
-    func stepDetection() {
-        let crop = self.cropCurrentStep()
-        let cropRect = crop.0
-        
-        if #available(iOS 16.0, *) {
-            let image = CIContext().createCGImage(CIImage(image: self.sceneView.snapshot())!, from: cropRect)
-            if (image != nil) {
-                let probability = self.modelPrediction(image: image!)
-                self.calculateStepScore(probability: probability)
-                if (self.nc.stepScore == 1) {
-                    self.nc.tryNextAction(isSurfaceOn: self.surface.isOn, isPreviousOn: self.previous.isOn)
-                    self.updateStepText()
-                }
-                //UIImageWriteToSavedPhotosAlbum(UIImage(cgImage: image!), nil, nil, nil)
-                //self.displayCurrentStepInSubview(image: image!, width: crop.1, height: crop.2)
-            }
-        }
-    }
-    
-    func displayCurrentStepInSubview(image: CGImage, width: Float, height: Float) {
-        self.tempView.removeFromSuperview()
-        self.tempView = UIImageView(image: UIImage(cgImage: image))
-        self.tempView.frame = CGRect(x: 50, y: 50, width: CGFloat(width*2), height: CGFloat(height*2))
-        self.sceneView.addSubview(self.tempView)
-    }
-    
-    func cropCurrentStep() -> (CGRect, Float, Float) {
-        let node = self.nc.nodes[self.nc.currentActionIndex]
-        let boundingBoxMin = node.convertPosition(node.boundingBox.min, to: nil)
-        let boundingBoxMax = node.convertPosition(node.boundingBox.max, to: nil)
-        let bbMinOnScreen = self.sceneView.projectPoint(boundingBoxMin)
-        let bbMaxOnScreen = self.sceneView.projectPoint(boundingBoxMax)
-        let windowSize = self.sceneView.frame
-        let bbWidth = max(abs(bbMinOnScreen.x - bbMaxOnScreen.x), 20)
-        let bbHeight = max(abs(bbMinOnScreen.y - bbMaxOnScreen.y), 20)
-        //print(bbMinOnScreen.x, bbMinOnScreen.y)
-        //print(bbMaxOnScreen.x, bbMaxOnScreen.y)
-        let cropRect = CGRectMake(CGFloat(min(bbMinOnScreen.x, bbMaxOnScreen.x)*2),
-                                  (windowSize.height - CGFloat(max(bbMinOnScreen.y, bbMaxOnScreen.y)))*2,
-                                  CGFloat(bbWidth*2),
-                                  CGFloat(bbHeight*2))
-        return (cropRect, bbWidth, bbHeight)
     }
     
     @objc func oneTapGestureFired(_ gesture: UITapGestureRecognizer) {
@@ -336,7 +267,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 if (self.nc.currentActionIndex < self.nc.nodes.count) {
                     let opacity = self.nc.nodes[self.nc.currentActionIndex].opacity
                     if (opacity < 0.25 && opacity > 0.05) {
-                        self.stepDetection()
+                        if (self.sc.stepDetection(sceneView: self.sceneView, prediction: self.prediction, currentStep: self.currentStep)) {
+                            self.nc.tryNextAction(isSurfaceOn: self.surface.isOn, isPreviousOn: self.previous.isOn)
+                            self.updateStepText()
+                        }
                     }
                 }
             })
@@ -344,7 +278,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         } else {
             self.prediction.isHidden = true
             self.updateStepText()
-            self.tempView.removeFromSuperview()
+            self.sc.tempView.removeFromSuperview()
             self.autoStepTimer.invalidate()
             print("Auto step is now Off")
         }
