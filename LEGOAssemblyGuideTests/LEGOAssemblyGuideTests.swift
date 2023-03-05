@@ -12,7 +12,7 @@ import ARKit
 
 final class LEGOAssemblyGuideTests: XCTestCase {
     
-    var nc = NodeController()
+    let nc = NodeController()
     
     override func setUpWithError() throws {
         nc.initializeNodes()
