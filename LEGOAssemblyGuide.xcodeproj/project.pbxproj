@@ -45,6 +45,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		07D7504B29B4955A00C1D9B6 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				07D7504D29B49E9300C1D9B6 /* Controllers */,
+				071A122029A459F200029948 /* ImageTools.swift */,
+				527951CD20CC07A000B9119D /* AppDelegate.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		07D7504C29B49C3300C1D9B6 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				527951D320CC07A000B9119D /* Main.storyboard */,
+				527951D820CC07A100B9119D /* LaunchScreen.storyboard */,
+				0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */,
+				527951D620CC07A100B9119D /* Assets.xcassets */,
+				527951CF20CC07A000B9119D /* art.scnassets */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		07D7504D29B49E9300C1D9B6 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				527951D120CC07A000B9119D /* ViewController.swift */,
+				07D7504729B33F3700C1D9B6 /* NodeController.swift */,
+				07D7504929B37CDF00C1D9B6 /* StepController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
 		527951C120CC07A000B9119D = {
 			isa = PBXGroup;
 			children = (
@@ -64,16 +96,8 @@
 		527951CC20CC07A000B9119D /* LEGOAssemblyGuide */ = {
 			isa = PBXGroup;
 			children = (
-				071A122029A459F200029948 /* ImageTools.swift */,
-				527951CD20CC07A000B9119D /* AppDelegate.swift */,
-				527951D120CC07A000B9119D /* ViewController.swift */,
-				07D7504729B33F3700C1D9B6 /* NodeController.swift */,
-				07D7504929B37CDF00C1D9B6 /* StepController.swift */,
-				527951D320CC07A000B9119D /* Main.storyboard */,
-				527951D820CC07A100B9119D /* LaunchScreen.storyboard */,
-				0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */,
-				527951D620CC07A100B9119D /* Assets.xcassets */,
-				527951CF20CC07A000B9119D /* art.scnassets */,
+				07D7504C29B49C3300C1D9B6 /* Assets */,
+				07D7504B29B4955A00C1D9B6 /* Sources */,
 				527951DB20CC07A100B9119D /* Info.plist */,
 			);
 			path = LEGOAssemblyGuide;
