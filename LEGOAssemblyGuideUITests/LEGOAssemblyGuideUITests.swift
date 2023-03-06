@@ -26,23 +26,47 @@ final class LEGOAssemblyGuideUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testLabelText() throws {
+    func testElementExistence() throws {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        let step = app.staticTexts["Please scan marker to start"]
-        let surface = app.staticTexts["Surface"]
-        let wireframe = app.staticTexts["Wireframe"]
-        let hand = app.staticTexts["Hand Occlusion"]
-        let previous = app.staticTexts["Previous"]
-        let preview = app.staticTexts["Preview"]
-        let auto = app.staticTexts["Auto Step"]
+        XCTAssertTrue(app.staticTexts["Please scan marker to start"].exists)
+        XCTAssertTrue(app.staticTexts["Surface"].exists)
+        XCTAssertTrue(app.staticTexts["Wireframe"].exists)
+        XCTAssertTrue(app.staticTexts["Hand Occlusion"].exists)
+        XCTAssertTrue(app.staticTexts["Previous"].exists)
+        XCTAssertTrue(app.staticTexts["Preview"].exists)
+        XCTAssertTrue(app.staticTexts["Auto Step"].exists)
         
+        XCTAssertTrue(app.switches["Surface"].exists)
+        XCTAssertTrue(app.switches["Wireframe"].exists)
+        XCTAssertTrue(app.switches["Hand"].exists)
+        XCTAssertTrue(app.switches["Previous"].exists)
+        XCTAssertTrue(app.switches["Preview"].exists)
+        XCTAssertTrue(app.switches["Autostep"].exists)
+        
+        XCTAssertTrue(app.otherElements["AR Scene View"].exists)
+        XCTAssertTrue(app.otherElements["Sub Scene View"].exists)
+    }
+    
+    func testScreenTap() throws {
+        let arView = app.otherElements["AR Scene view"]
+        var step = app.staticTexts["Step: 1 / 467"]
+        XCTAssertTrue(step.waitForExistence(timeout: 20))
+        
+        for i in 2...4 {
+            arView.tap()
+            step = app.staticTexts["Step: " + String(i) + " / 467"]
+            XCTAssertTrue(step.exists)
+        }
+        
+        for i in 1...3 {
+            arView.twoFingerTap()
+            step = app.staticTexts["Step: " + String(4-i) + " / 467"]
+            XCTAssertTrue(step.exists)
+        }
+        
+        arView.twoFingerTap()
+        step = app.staticTexts["Step: 1 / 467"]
         XCTAssertTrue(step.exists)
-        XCTAssertTrue(surface.exists)
-        XCTAssertTrue(wireframe.exists)
-        XCTAssertTrue(hand.exists)
-        XCTAssertTrue(previous.exists)
-        XCTAssertTrue(preview.exists)
-        XCTAssertTrue(auto.exists)
     }
 
 }

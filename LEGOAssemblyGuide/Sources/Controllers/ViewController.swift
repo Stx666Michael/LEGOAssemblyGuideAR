@@ -76,6 +76,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         hand.setOn(false, animated: true)
         autostep.setOn(false, animated: true)
         prediction.isHidden = true
+        
+        // Setup for UI testing
+        self.sceneView.accessibilityIdentifier = "AR Scene View"
+        self.subSceneView.accessibilityIdentifier = "Sub Scene View"
+        self.surface.accessibilityIdentifier = "Surface"
+        self.wireframe.accessibilityIdentifier = "Wireframe"
+        self.hand.accessibilityIdentifier = "Hand"
+        self.previous.accessibilityIdentifier = "Previous"
+        self.preview.accessibilityIdentifier = "Preview"
+        self.autostep.accessibilityIdentifier = "Autostep"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -108,7 +118,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         DispatchQueue.main.async {
             if anchor is ARImageAnchor {
-                self.nc = NodeController()
                 self.nc.initializeNodes()
                 self.sc = StepController(nc: self.nc)
                 
