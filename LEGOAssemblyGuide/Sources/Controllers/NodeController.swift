@@ -9,17 +9,34 @@
 import SceneKit
 
 @available(iOS 13.0.0, *)
+/// The class storing digital models, and functions to display each model independently
 class NodeController {
     
+    /// Root node of all digital models
     var rootNode = SCNScene(named: "art.scnassets/LEGO.scn")!.rootNode
+    
+    /// The scene for individual model preview
     var subScene = SCNScene(named: "art.scnassets/LEGO.scn")!
+    
+    /// The lists storing digital models sequentially to be displayed as in-situ instruction
     var nodes = [SCNNode]()
+    
+    /// The lists storing digital models sequentially to be displayed in preview window
     var nodesInSubview = [SCNNode]()
+    
+    /// The animation of each digital model
     var animation = SCNAction()
+    
+    /// The index of current instruction step
     var currentActionIndex = 0
+    
+    /// Drag distance to calculate number of action shift
     var lastActionShift = 0
+    
+    /// Confidence score of one step between 0 and 1
     var stepScore = Double(0)
     
+    /// Take nodes from the SCN graph sequentially into the list, and setup their animations
     func initializeNodes() {
         self.subScene.rootNode.childNode(withName: "Lego_21034_1_London", recursively: true)?.removeFromParentNode()
         self.rootNode.position = SCNVector3(x: -10, y: 0, z: 0)
@@ -51,6 +68,12 @@ class NodeController {
         self.subScene.rootNode.addChildNode(self.nodesInSubview.first!)
     }
     
+    /// Present the next model-based instruction
+    /// - Parameters:
+    ///   - node: The current digital model for in-situ instruction
+    ///   - previewNode: The current digital model for preview
+    ///   - isSurfaceOn: True if the "surface" switch is turned on
+    ///   - isPreviousOn: True if the "previous" switch is turned on
     func nextAction(node: SCNNode, previewNode: SCNNode, isSurfaceOn: Bool, isPreviousOn: Bool) {
         node.removeAllActions()
         previewNode.removeFromParentNode()
@@ -72,6 +95,10 @@ class NodeController {
         }
     }
     
+    /// Present the previous model-based instruction
+    /// - Parameters:
+    ///   - node: The current digital model for in-situ instruction
+    ///   - previewNode: The current digital model for preview
     func prevAction(node: SCNNode, previewNode: SCNNode) {
         node.removeAllActions()
         node.opacity = 1
@@ -85,6 +112,10 @@ class NodeController {
         self.subScene.rootNode.addChildNode(self.nodesInSubview[self.currentActionIndex])
     }
     
+    /// Try to present the next model-based instruction, if it is not at the last step
+    /// - Parameters:
+    ///   - isSurfaceOn: True if the "surface" switch is turned on
+    ///   - isPreviousOn: True if the "previous" switch is turned on
     func tryNextAction(isSurfaceOn: Bool, isPreviousOn: Bool) {
         if (self.currentActionIndex < self.nodes.count) {
             self.nextAction(node: nodes[self.currentActionIndex], previewNode: nodesInSubview[self.currentActionIndex], isSurfaceOn: isSurfaceOn, isPreviousOn: isPreviousOn)
@@ -94,6 +125,7 @@ class NodeController {
         }
     }
     
+    /// Try to present the previous model-based instruction, if it is not at the first step
     func tryPrevAction() {
         if (self.currentActionIndex == self.nodes.count && self.nodes.count > 0) {
             //print("Assembly finished!")
