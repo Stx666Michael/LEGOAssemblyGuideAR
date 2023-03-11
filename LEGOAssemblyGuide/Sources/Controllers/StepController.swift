@@ -36,7 +36,7 @@ class StepController {
     ///   - sceneView: The view that blends virtual 3D content from SceneKit into augmented reality experience
     ///   - prediction: The UI text showing the prediction result with probability
     ///   - currentStep: The UI text showing current step progress
-    /// - Returns: True if the completeness score of current construction step is 1, false otherwise
+    /// - Returns: `true` if the completeness score of current construction step is 1, `false` otherwise
     func stepDetection(sceneView: ARSCNView, prediction: UILabel, currentStep: UILabel) -> Bool {
         let crop = self.getBoundingBox(sceneView: sceneView)
         let cropRect = crop.0

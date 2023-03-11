@@ -70,11 +70,11 @@ class NodeController {
     
     /// Present the next model-based instruction
     /// - Parameters:
-    ///   - node: The current digital model for in-situ instruction
-    ///   - previewNode: The current digital model for preview
-    ///   - isSurfaceOn: True if the "surface" switch is turned on
-    ///   - isPreviousOn: True if the "previous" switch is turned on
-    func nextAction(node: SCNNode, previewNode: SCNNode, isSurfaceOn: Bool, isPreviousOn: Bool) {
+    ///   - isSurfaceOn: `true` if the "surface" switch is turned on
+    ///   - isPreviousOn: `true` if the "previous" switch is turned on
+    func nextAction(isSurfaceOn: Bool, isPreviousOn: Bool) {
+        let node = self.nodes[self.currentActionIndex]
+        let previewNode = self.nodesInSubview[self.currentActionIndex]
         node.removeAllActions()
         previewNode.removeFromParentNode()
         self.currentActionIndex += 1
@@ -96,10 +96,11 @@ class NodeController {
     }
     
     /// Present the previous model-based instruction
-    /// - Parameters:
-    ///   - node: The current digital model for in-situ instruction
-    ///   - previewNode: The current digital model for preview
-    func prevAction(node: SCNNode, previewNode: SCNNode) {
+    /// - Parameter isLastAction: `true` if current step is the last one
+    func prevAction(isLastAction: Bool) {
+        let result = isLastAction ? 1 : 0
+        let node = self.nodes[self.currentActionIndex-result]
+        let previewNode = self.nodesInSubview[self.currentActionIndex-result]
         node.removeAllActions()
         node.opacity = 1
         node.isHidden = true
@@ -114,11 +115,11 @@ class NodeController {
     
     /// Try to present the next model-based instruction, if it is not at the last step
     /// - Parameters:
-    ///   - isSurfaceOn: True if the "surface" switch is turned on
-    ///   - isPreviousOn: True if the "previous" switch is turned on
+    ///   - isSurfaceOn: `true` if the "surface" switch is turned on
+    ///   - isPreviousOn: `true` if the "previous" switch is turned on
     func tryNextAction(isSurfaceOn: Bool, isPreviousOn: Bool) {
         if (self.currentActionIndex < self.nodes.count) {
-            self.nextAction(node: nodes[self.currentActionIndex], previewNode: nodesInSubview[self.currentActionIndex], isSurfaceOn: isSurfaceOn, isPreviousOn: isPreviousOn)
+            self.nextAction(isSurfaceOn: isSurfaceOn, isPreviousOn: isPreviousOn)
             print(self.currentActionIndex)
         } else {
             print("No more steps!")
@@ -129,10 +130,10 @@ class NodeController {
     func tryPrevAction() {
         if (self.currentActionIndex == self.nodes.count && self.nodes.count > 0) {
             //print("Assembly finished!")
-            self.prevAction(node: nodes[self.currentActionIndex-1], previewNode: nodesInSubview[self.currentActionIndex-1])
+            self.prevAction(isLastAction: true)
             print(self.currentActionIndex)
         } else if (self.currentActionIndex > 0) {
-            self.prevAction(node: nodes[self.currentActionIndex], previewNode: nodesInSubview[self.currentActionIndex])
+            self.prevAction(isLastAction: false)
             print(self.currentActionIndex)
         } else {
             print("No previous steps!")
