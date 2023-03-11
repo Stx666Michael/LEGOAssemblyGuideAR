@@ -8,8 +8,8 @@
 
 import UIKit
 
-@UIApplicationMain
 /// The app delegate class for the application. This class is responsible for handling major application lifecycle events and acts as a central point for managing application resources.
+@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     /// A property that stores the app's window object, which provides the coordinate system for views displayed on the screen.

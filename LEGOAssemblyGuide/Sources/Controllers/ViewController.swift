@@ -10,8 +10,8 @@ import UIKit
 import ARKit
 import SceneKit
 
-@available(iOS 13.0.0, *)
 /// The class for user interaction with the application interface, and controller of the AR view
+@available(iOS 13.0.0, *)
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     // Elements in the application interface

@@ -7,12 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		071A122129A459F200029948 /* ImageTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071A122029A459F200029948 /* ImageTools.swift */; };
+		071A122129A459F200029948 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071A122029A459F200029948 /* UIImageExtension.swift */; };
 		0776910E29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */; };
 		07D7504829B33F3700C1D9B6 /* NodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7504729B33F3700C1D9B6 /* NodeController.swift */; };
 		07D7504A29B37CDF00C1D9B6 /* StepController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7504929B37CDF00C1D9B6 /* StepController.swift */; };
-		07D7505629B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7505529B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests.swift */; };
+		07D7505629B4AB1D00C1D9B6 /* NodeControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7505529B4AB1D00C1D9B6 /* NodeControllerTests.swift */; };
 		07D7506729B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7506629B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests.swift */; };
+		07F2E65629BC7E5E006D05EB /* StepControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F2E65529BC7E5E006D05EB /* StepControllerTests.swift */; };
+		07F2E65A29BCE1DB006D05EB /* ViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F2E65929BCE1DB006D05EB /* ViewControllerTests.swift */; };
 		527951CE20CC07A000B9119D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527951CD20CC07A000B9119D /* AppDelegate.swift */; };
 		527951D020CC07A000B9119D /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 527951CF20CC07A000B9119D /* art.scnassets */; };
 		527951D220CC07A000B9119D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 527951D120CC07A000B9119D /* ViewController.swift */; };
@@ -39,14 +41,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		071A122029A459F200029948 /* ImageTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTools.swift; sourceTree = "<group>"; };
+		071A122029A459F200029948 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = LEGOStepClassifier.mlmodel; sourceTree = "<group>"; };
 		07D7504729B33F3700C1D9B6 /* NodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeController.swift; sourceTree = "<group>"; };
 		07D7504929B37CDF00C1D9B6 /* StepController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepController.swift; sourceTree = "<group>"; };
 		07D7505329B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEGOAssemblyGuideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		07D7505529B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEGOAssemblyGuideTests.swift; sourceTree = "<group>"; };
+		07D7505529B4AB1D00C1D9B6 /* NodeControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeControllerTests.swift; sourceTree = "<group>"; };
 		07D7506429B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEGOAssemblyGuideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		07D7506629B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEGOAssemblyGuideUITests.swift; sourceTree = "<group>"; };
+		07F2E65529BC7E5E006D05EB /* StepControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepControllerTests.swift; sourceTree = "<group>"; };
+		07F2E65929BCE1DB006D05EB /* ViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerTests.swift; sourceTree = "<group>"; };
 		527951CA20CC07A000B9119D /* LEGOAssemblyGuide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LEGOAssemblyGuide.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		527951CD20CC07A000B9119D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		527951CF20CC07A000B9119D /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -86,7 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				07D7504D29B49E9300C1D9B6 /* Controllers */,
-				071A122029A459F200029948 /* ImageTools.swift */,
+				071A122029A459F200029948 /* UIImageExtension.swift */,
 				527951CD20CC07A000B9119D /* AppDelegate.swift */,
 			);
 			path = Sources;
@@ -117,7 +121,9 @@
 		07D7505429B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests */ = {
 			isa = PBXGroup;
 			children = (
-				07D7505529B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests.swift */,
+				07F2E65529BC7E5E006D05EB /* StepControllerTests.swift */,
+				07D7505529B4AB1D00C1D9B6 /* NodeControllerTests.swift */,
+				07F2E65929BCE1DB006D05EB /* ViewControllerTests.swift */,
 			);
 			path = LEGOAssemblyGuideTests;
 			sourceTree = "<group>";
@@ -293,7 +299,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07D7505629B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests.swift in Sources */,
+				07F2E65A29BCE1DB006D05EB /* ViewControllerTests.swift in Sources */,
+				07D7505629B4AB1D00C1D9B6 /* NodeControllerTests.swift in Sources */,
+				07F2E65629BC7E5E006D05EB /* StepControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,7 +321,7 @@
 				07D7504829B33F3700C1D9B6 /* NodeController.swift in Sources */,
 				527951CE20CC07A000B9119D /* AppDelegate.swift in Sources */,
 				0776910E29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel in Sources */,
-				071A122129A459F200029948 /* ImageTools.swift in Sources */,
+				071A122129A459F200029948 /* UIImageExtension.swift in Sources */,
 				07D7504A29B37CDF00C1D9B6 /* StepController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

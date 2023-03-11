@@ -8,8 +8,8 @@
 
 import SceneKit
 
-@available(iOS 13.0.0, *)
 /// The class storing digital models, and functions to display each model independently
+@available(iOS 13.0.0, *)
 class NodeController {
     
     /// Root node of all digital models

@@ -9,8 +9,8 @@
 import UIKit
 import ARKit
 
-@available(iOS 13.0.0, *)
 /// The class storing CNN models, and functions to detect whether a construction step is finished
+@available(iOS 13.0.0, *)
 class StepController {
     
     /// Set true to save image within bounding box of every step, to collet training data

@@ -1,9 +1,9 @@
 //
-//  ImageTools.swift
+//  UIImageExtension.swift
 //  LEGOAssemblyGuide
 //
 //  Commented by Tianxiang Song on 21/02/2023.
-//  Source: https://github.com/create-with-swift/coreml-with-swiftui/blob/b6cd56f1efbe9e097312c2a3e224a38852e18009/CoreMLwithSwiftUI/UIImage%2BExtension.swift
+//  Source: https://github.com/create-with-swift/coreml-with-swiftui/blob/main/CoreMLwithSwiftUI/UIImage%2BExtension.swift
 //
 
 import Foundation
