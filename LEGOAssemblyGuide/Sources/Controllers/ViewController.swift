@@ -17,6 +17,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     // Elements in the application interface
     @IBOutlet var sceneView: ARSCNView!
     @IBOutlet var subSceneView: SCNView!
+    @IBOutlet var functionalView: UIView!
     @IBOutlet var currentStep: UILabel!
     @IBOutlet var surface: UISwitch!
     @IBOutlet var wireframe: UISwitch!
@@ -46,56 +47,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.viewDidLoad()
         
         // Set the view's delegate and show statistics
-        sceneView.delegate = self
+        self.sceneView.delegate = self
         //sceneView.showsStatistics = true
         
         // Create a new scene and set the scene to view
-        sceneView.scene = SCNScene(named: "art.scnassets/GameScene.scn")!
+        self.sceneView.scene = SCNScene(named: "art.scnassets/GameScene.scn")!
         
-        // Recognize one finger tap
-        let oneTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(oneTapGestureFired(_ :)))
-        oneTapRecognizer.numberOfTapsRequired = 1
-        oneTapRecognizer.numberOfTouchesRequired = 1
-        
-        // Recognize two finger tap
-        let twoTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(twoTapGestureFired(_ :)))
-        twoTapRecognizer.numberOfTapsRequired = 1
-        twoTapRecognizer.numberOfTouchesRequired = 2
-        
-        // Recognize long press
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureFired(_ :)))
-        longPressRecognizer.numberOfTouchesRequired = 1
-        longPressRecognizer.minimumPressDuration = 1
-        
-        // Add gesture recognizer
-        sceneView.addGestureRecognizer(oneTapRecognizer)
-        sceneView.addGestureRecognizer(twoTapRecognizer)
-        sceneView.addGestureRecognizer(longPressRecognizer)
-        sceneView.isUserInteractionEnabled = true
-        
-        // Add switch function
-        surface.addTarget(self, action: #selector(self.surfaceStateDidChange(_:)), for: .valueChanged)
-        wireframe.addTarget(self, action: #selector(self.wireframeStateDidChange(_:)), for: .valueChanged)
-        hand.addTarget(self, action: #selector(self.handStateDidChange(_:)), for: .valueChanged)
-        previous.addTarget(self, action: #selector(self.previousStateDidChange(_:)), for: .valueChanged)
-        preview.addTarget(self, action: #selector(self.previewStateDidChange(_:)), for: .valueChanged)
-        autostep.addTarget(self, action: #selector(self.autostepStateDidChange(_:)), for: .valueChanged)
-        
-        // Setup switch state
-        wireframe.setOn(false, animated: true)
-        hand.setOn(false, animated: true)
-        autostep.setOn(false, animated: true)
-        prediction.isHidden = true
-        
-        // Setup for UI testing
-        self.sceneView.accessibilityIdentifier = "AR Scene View"
-        self.subSceneView.accessibilityIdentifier = "Sub Scene View"
-        self.surface.accessibilityIdentifier = "Surface"
-        self.wireframe.accessibilityIdentifier = "Wireframe"
-        self.hand.accessibilityIdentifier = "Hand"
-        self.previous.accessibilityIdentifier = "Previous"
-        self.preview.accessibilityIdentifier = "Preview"
-        self.autostep.accessibilityIdentifier = "Autostep"
+        self.functionalView.isHidden = true
+        self.setupIdentifier()
     }
     
     /// Notifies the view controller that its view is about to be added to a view hierarchy.
@@ -108,11 +67,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             print("No images available")
             return
         }
-        configuration.trackingImages = trackedImages
-        configuration.maximumNumberOfTrackedImages = 1
+        self.configuration.trackingImages = trackedImages
+        self.configuration.maximumNumberOfTrackedImages = 1
         
         // Run the view's session
-        sceneView.session.run(configuration)
+        self.sceneView.session.run(self.configuration)
     }
     
     /// Notifies the view controller that its view is about to be removed from a view hierarchy.
@@ -121,7 +80,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.viewWillDisappear(animated)
         
         // Pause the view's session
-        sceneView.session.pause()
+        self.sceneView.session.pause()
     }
 
     // MARK: - ARSCNViewDelegate
@@ -137,6 +96,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         DispatchQueue.main.async {
             if anchor is ARImageAnchor {
+                self.functionalView.isHidden = false
+                self.setupSwitches()
+                self.setupGestureRecognizer()
+                
                 // Initialize instances of NodeController and StepController
                 self.nc.initializeNodes()
                 self.sc = StepController(nc: self.nc)
@@ -161,23 +124,88 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
+    /// Setup recongizers for tap, press and drag gestures
+    func setupGestureRecognizer() {
+        // Recognize one finger tap
+        let oneTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(oneTapGestureFired(_ :)))
+        oneTapRecognizer.numberOfTapsRequired = 1
+        oneTapRecognizer.numberOfTouchesRequired = 1
+        
+        // Recognize two finger tap
+        let twoTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(twoTapGestureFired(_ :)))
+        twoTapRecognizer.numberOfTapsRequired = 1
+        twoTapRecognizer.numberOfTouchesRequired = 2
+        
+        // Recognize long press
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureFired(_ :)))
+        longPressRecognizer.numberOfTouchesRequired = 1
+        longPressRecognizer.minimumPressDuration = 1
+        
+        // Add gesture recognizer
+        self.sceneView.addGestureRecognizer(oneTapRecognizer)
+        self.sceneView.addGestureRecognizer(twoTapRecognizer)
+        self.sceneView.addGestureRecognizer(longPressRecognizer)
+        self.sceneView.isUserInteractionEnabled = true
+    }
+    
+    /// Setup switchs for rendering customization and accessibility functions
+    func setupSwitches() {
+        // Add switch function
+        self.surface.addTarget(self, action: #selector(self.surfaceStateDidChange(_:)), for: .valueChanged)
+        self.wireframe.addTarget(self, action: #selector(self.wireframeStateDidChange(_:)), for: .valueChanged)
+        self.hand.addTarget(self, action: #selector(self.handStateDidChange(_:)), for: .valueChanged)
+        self.previous.addTarget(self, action: #selector(self.previousStateDidChange(_:)), for: .valueChanged)
+        self.preview.addTarget(self, action: #selector(self.previewStateDidChange(_:)), for: .valueChanged)
+        self.autostep.addTarget(self, action: #selector(self.autostepStateDidChange(_:)), for: .valueChanged)
+        
+        // Setup switch and label state
+        self.wireframe.setOn(false, animated: true)
+        self.hand.setOn(false, animated: true)
+        self.autostep.setOn(false, animated: true)
+        self.prediction.isHidden = true
+    }
+    
+    /// Setup identifiers for UI testing
+    func setupIdentifier() {
+        self.sceneView.accessibilityIdentifier = "AR Scene View"
+        self.subSceneView.accessibilityIdentifier = "Sub Scene View"
+        self.functionalView.accessibilityIdentifier = "Functional View"
+        self.surface.accessibilityIdentifier = "Surface"
+        self.wireframe.accessibilityIdentifier = "Wireframe"
+        self.hand.accessibilityIdentifier = "Hand"
+        self.previous.accessibilityIdentifier = "Previous"
+        self.preview.accessibilityIdentifier = "Preview"
+        self.autostep.accessibilityIdentifier = "Autostep"
+    }
+    
+    // Separate @objc function from swift function for unit/integration testing
+    @objc func oneTapGestureFired(_ gesture: UITapGestureRecognizer) {self.oneTapGestureFired()}
+    @objc func twoTapGestureFired(_ gesture: UITapGestureRecognizer) {self.twoTapGestureFired()}
+    @objc func longPressGestureFired(_ gesture: UILongPressGestureRecognizer) {self.longPressGestureFired(gesture: gesture)}
+    @objc func surfaceStateDidChange(_ sender: UISwitch!) {self.surfaceStateDidChange(sender: sender)}
+    @objc func wireframeStateDidChange(_ sender: UISwitch!) {self.wireframeStateDidChange(sender: sender)}
+    @objc func handStateDidChange(_ sender: UISwitch!) {self.handStateDidChange(sender: sender)}
+    @objc func previousStateDidChange(_ sender: UISwitch!) {self.previousStateDidChange(sender: sender)}
+    @objc func previewStateDidChange(_ sender: UISwitch!) {self.previewStateDidChange(sender: sender)}
+    @objc func autostepStateDidChange(_ sender: UISwitch!) {self.autostepStateDidChange(sender: sender)}
+    
     /// Response to one finger tap on screen (proceed to the next instruction step)
     /// - Parameter gesture: Finger tap gesture recognizer
-    @objc func oneTapGestureFired(_ gesture: UITapGestureRecognizer) {
+    func oneTapGestureFired() {
         self.nc.tryNextAction(isSurfaceOn: self.surface.isOn, isPreviousOn: self.previous.isOn)
         self.updateStepText()
     }
     
     /// Response to two finger tap on screen (back to the previous instruction step)
     /// - Parameter gesture: Finger tap gesture recognizer
-    @objc func twoTapGestureFired(_ gesture: UITapGestureRecognizer) {
+    func twoTapGestureFired() {
         self.nc.tryPrevAction()
         self.updateStepText()
     }
     
     /// Response to one finger long press and drag on screen (drag left - fast go to previous steps, drag right - the reverse)
     /// - Parameter gesture: Finger long press gesture recognizer
-    @objc func longPressGestureFired(_ gesture: UILongPressGestureRecognizer) {
+    func longPressGestureFired(gesture: UILongPressGestureRecognizer) {
         guard let view = gesture.view else {return}
         let screenWidth = UIScreen.main.bounds.width
         let distancePerActionJump = max(Int(screenWidth)/(self.nc.nodes.count+1), 1)
@@ -213,7 +241,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     /// Response to changes in switch "surface" - render models with colored, physical-based materials
     /// - Parameter sender: Switch "surface"
-    @objc func surfaceStateDidChange(_ sender: UISwitch!) {
+    func surfaceStateDidChange(sender: UISwitch!) {
         if (sender.isOn == true) {
             for node in self.nc.nodes[...(self.nc.currentActionIndex-1)] {
                 node.opacity = 1
@@ -229,7 +257,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     /// Response to changes in switch "wireframe" - display the wireframe of each virtual block
     /// - Parameter sender: Switch "wireframe"
-    @objc func wireframeStateDidChange(_ sender: UISwitch!) {
+    func wireframeStateDidChange(sender: UISwitch!) {
         if (sender.isOn == true) {
             if (self.hand.isOn) {
                 let alert = UIAlertController(title: "Warning", message: "Wireframe rendering does not work while hand occlusion is ON", preferredStyle: .alert)
@@ -249,7 +277,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     /// Response to changes in switch "hand" - open realtime hand occlusion
     /// - Parameter sender: Switch "hand"
-    @objc func handStateDidChange(_ sender: UISwitch!) {
+    func handStateDidChange(sender: UISwitch!) {
         if (sender.isOn == true) {
             configuration.frameSemantics.insert(.personSegmentationWithDepth)
             if (self.wireframe.isOn) {
@@ -266,7 +294,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     /// Response to changes in switch "previous" - display all virtual bricks in previous construction
     /// - Parameter sender: Switch "previous"
-    @objc func previousStateDidChange(_ sender: UISwitch!) {
+    func previousStateDidChange(sender: UISwitch!) {
         if (sender.isOn == true) {
             for node in self.nc.nodes[...(self.nc.currentActionIndex-1)] {
                 node.isHidden = false
@@ -282,7 +310,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     /// Response to changes in switch "preview" - display the virtual model of current construction block with rotating animation separately in preview window below the progress bar
     /// - Parameter sender: Switch "preview"
-    @objc func previewStateDidChange(_ sender: UISwitch!) {
+    func previewStateDidChange(sender: UISwitch!) {
         if (sender.isOn == true) {
             self.subSceneView.isHidden = false
             print("Preview is now ON")
@@ -294,7 +322,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     /// Response to changes in switch "autostep" - detect whether the current step is finished of not, and proceed to next step automatically
     /// - Parameter sender: Switch "autostep"
-    @objc func autostepStateDidChange(_ sender: UISwitch!) {
+    func autostepStateDidChange(sender: UISwitch!) {
         if (sender.isOn == true) {
             self.prediction.isHidden = false
             if (!self.wireframe.isOn) {

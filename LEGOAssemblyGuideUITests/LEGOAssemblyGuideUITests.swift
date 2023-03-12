@@ -45,10 +45,11 @@ final class LEGOAssemblyGuideUITests: XCTestCase {
         
         XCTAssertTrue(app.otherElements["AR Scene View"].exists)
         XCTAssertTrue(app.otherElements["Sub Scene View"].exists)
+        XCTAssertTrue(app.otherElements["Functional View"].exists)
     }
     
     func testScreenTap() throws {
-        let arView = app.otherElements["AR Scene view"]
+        let arView = app.otherElements["AR Scene View"]
         var step = app.staticTexts["Step: 1 / 467"]
         XCTAssertTrue(step.waitForExistence(timeout: 20))
         

@@ -26,8 +26,31 @@ final class ViewControllerTests: XCTestCase {
 
     func testViewDidLoad() throws {
         XCTAssertNotNil(sut.sceneView, "ARSCNView should not be nil")
+        XCTAssertNotEqual(sut.sceneView.debugOptions, ARSCNDebugOptions.showWireframe, "AR scene view debug options should not set to show wireframe")
         XCTAssertTrue(sut.sceneView.delegate === sut, "Scene View delegate must be set to the view controller instance")
-        XCTAssertNotEqual(sut.sceneView.debugOptions, ARSCNDebugOptions.showWireframe, "AR scene view debug options must not set to show wireframe")
+        XCTAssertTrue(sut.currentStep.text == "Please scan marker to start")
+        XCTAssertTrue(sut.functionalView.isHidden == true)
+    }
+    
+    func testUpdateStepTest() throws {
+        sut.nc.initializeNodes()
+        sut.updateStepText()
+        XCTAssertTrue(sut.currentStep.text == "Step: 1 / 467")
+        
+        sut.nc.currentActionIndex = 467
+        sut.updateStepText()
+        XCTAssertTrue(sut.currentStep.text == "Construction done!")
+    }
+    
+    func testSetupSwitches() throws {
+        sut.setupSwitches()
+        XCTAssertTrue(sut.surface.isOn)
+        XCTAssertTrue(sut.previous.isOn)
+        XCTAssertTrue(sut.preview.isOn)
+        XCTAssertFalse(sut.wireframe.isOn)
+        XCTAssertFalse(sut.hand.isOn)
+        XCTAssertFalse(sut.autostep.isOn)
+        XCTAssertTrue(sut.prediction.isHidden)
     }
 
 }
