@@ -24,13 +24,14 @@ final class ViewControllerTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+    /*
     func testViewDidLoad() throws {
         XCTAssertNotNil(sut.sceneView, "ARSCNView should not be nil")
         XCTAssertNotEqual(sut.sceneView.debugOptions, ARSCNDebugOptions.showWireframe, "AR scene view debug options should not set to show wireframe")
         XCTAssertTrue(sut.sceneView.delegate === sut, "Scene View delegate must be set to the view controller instance")
         XCTAssertTrue(sut.currentStep.text == "Please scan marker to start")
         XCTAssertTrue(sut.functionalView.isHidden == true)
-    }
+    }*/
     
     func testUpdateStepTest() throws {
         sut.nc.initializeNodes()

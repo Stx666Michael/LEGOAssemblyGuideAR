@@ -8,7 +8,7 @@
 
 import SceneKit
 
-/// The class storing digital models, and functions to display each model independently
+/// The class storing digital models, and functions to display each model part as AR instructions
 @available(iOS 13.0.0, *)
 class NodeController {
     

@@ -10,22 +10,42 @@ import UIKit
 import ARKit
 import SceneKit
 
-/// The class for user interaction with the application interface, and controller of the AR view
+/// The class controlling behaviour of screen elements, and for user interaction with the application interface
 @available(iOS 13.0.0, *)
 class ViewController: UIViewController, ARSCNViewDelegate {
-
-    // Elements in the application interface
+    
+    /// Main scene displaying model-based AR instructions
     @IBOutlet var sceneView: ARSCNView!
+    
+    /// Sub scene displaying single model piece for preview
     @IBOutlet var subSceneView: SCNView!
+    
+    /// Panel containing functional switches for accessibility options
     @IBOutlet var functionalView: UIView!
+    
+    /// Text label showing construction process
     @IBOutlet var currentStep: UILabel!
-    @IBOutlet var surface: UISwitch!
-    @IBOutlet var wireframe: UISwitch!
-    @IBOutlet var hand: UISwitch!
-    @IBOutlet var previous: UISwitch!
-    @IBOutlet var preview: UISwitch!
-    @IBOutlet var autostep: UISwitch!
+    
+    /// Text label showing step prediction results
     @IBOutlet var prediction: UILabel!
+    
+    /// Switch for surface rendering option
+    @IBOutlet var surface: UISwitch!
+    
+    /// Switch for wireframe rendering option
+    @IBOutlet var wireframe: UISwitch!
+    
+    /// Switch for hand occlusion option
+    @IBOutlet var hand: UISwitch!
+    
+    /// Switch for previous instruction model rendering option
+    @IBOutlet var previous: UISwitch!
+    
+    /// Switch for showing preview window
+    @IBOutlet var preview: UISwitch!
+    
+    /// Switch for enabling automatic step control
+    @IBOutlet var autostep: UISwitch!
     
     /// The class storing digital models, and functions to display each model independently
     var nc = NodeController()
@@ -150,17 +170,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     /// Setup recongizers for tap, press and drag gestures
     func setupGestureRecognizer() {
         // Recognize one finger tap
-        let oneTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(oneTapGestureFired(_ :)))
+        let oneTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self._oneTapGestureFired(_ :)))
         oneTapRecognizer.numberOfTapsRequired = 1
         oneTapRecognizer.numberOfTouchesRequired = 1
         
         // Recognize two finger tap
-        let twoTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(twoTapGestureFired(_ :)))
+        let twoTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self._twoTapGestureFired(_ :)))
         twoTapRecognizer.numberOfTapsRequired = 1
         twoTapRecognizer.numberOfTouchesRequired = 2
         
         // Recognize long press
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureFired(_ :)))
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self._longPressGestureFired(_ :)))
         longPressRecognizer.numberOfTouchesRequired = 1
         longPressRecognizer.minimumPressDuration = 1
         
@@ -174,12 +194,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     /// Setup switchs for rendering customization and accessibility functions
     func setupSwitches() {
         // Add switch function
-        self.surface.addTarget(self, action: #selector(self.surfaceStateDidChange(_:)), for: .valueChanged)
-        self.wireframe.addTarget(self, action: #selector(self.wireframeStateDidChange(_:)), for: .valueChanged)
-        self.hand.addTarget(self, action: #selector(self.handStateDidChange(_:)), for: .valueChanged)
-        self.previous.addTarget(self, action: #selector(self.previousStateDidChange(_:)), for: .valueChanged)
-        self.preview.addTarget(self, action: #selector(self.previewStateDidChange(_:)), for: .valueChanged)
-        self.autostep.addTarget(self, action: #selector(self.autostepStateDidChange(_:)), for: .valueChanged)
+        self.surface.addTarget(self, action: #selector(self._surfaceStateDidChange(_:)), for: .valueChanged)
+        self.wireframe.addTarget(self, action: #selector(self._wireframeStateDidChange(_:)), for: .valueChanged)
+        self.hand.addTarget(self, action: #selector(self._handStateDidChange(_:)), for: .valueChanged)
+        self.previous.addTarget(self, action: #selector(self._previousStateDidChange(_:)), for: .valueChanged)
+        self.preview.addTarget(self, action: #selector(self._previewStateDidChange(_:)), for: .valueChanged)
+        self.autostep.addTarget(self, action: #selector(self._autostepStateDidChange(_:)), for: .valueChanged)
         
         // Setup switch and label state
         self.wireframe.setOn(false, animated: true)
@@ -201,26 +221,26 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         self.autostep.accessibilityIdentifier = "Autostep"
     }
     
-    // Separate @objc function from swift function for unit/integration testing
-    @objc func oneTapGestureFired(_ gesture: UITapGestureRecognizer) {self.oneTapGestureFired()}
-    @objc func twoTapGestureFired(_ gesture: UITapGestureRecognizer) {self.twoTapGestureFired()}
-    @objc func longPressGestureFired(_ gesture: UILongPressGestureRecognizer) {self.longPressGestureFired(gesture: gesture)}
-    @objc func surfaceStateDidChange(_ sender: UISwitch!) {self.surfaceStateDidChange(sender: sender)}
-    @objc func wireframeStateDidChange(_ sender: UISwitch!) {self.wireframeStateDidChange(sender: sender)}
-    @objc func handStateDidChange(_ sender: UISwitch!) {self.handStateDidChange(sender: sender)}
-    @objc func previousStateDidChange(_ sender: UISwitch!) {self.previousStateDidChange(sender: sender)}
-    @objc func previewStateDidChange(_ sender: UISwitch!) {self.previewStateDidChange(sender: sender)}
-    @objc func autostepStateDidChange(_ sender: UISwitch!) {self.autostepStateDidChange(sender: sender)}
+    // MARK: - Functions respond to user interaction
+    // Swift functions separated from Objective-C functions for unit/integration testing
+    
+    @objc func _oneTapGestureFired(_ gesture: UITapGestureRecognizer) {self.oneTapGestureFired()}
+    @objc func _twoTapGestureFired(_ gesture: UITapGestureRecognizer) {self.twoTapGestureFired()}
+    @objc func _longPressGestureFired(_ gesture: UILongPressGestureRecognizer) {self.longPressGestureFired(gesture: gesture)}
+    @objc func _surfaceStateDidChange(_ sender: UISwitch!) {self.surfaceStateDidChange(sender: sender)}
+    @objc func _wireframeStateDidChange(_ sender: UISwitch!) {self.wireframeStateDidChange(sender: sender)}
+    @objc func _handStateDidChange(_ sender: UISwitch!) {self.handStateDidChange(sender: sender)}
+    @objc func _previousStateDidChange(_ sender: UISwitch!) {self.previousStateDidChange(sender: sender)}
+    @objc func _previewStateDidChange(_ sender: UISwitch!) {self.previewStateDidChange(sender: sender)}
+    @objc func _autostepStateDidChange(_ sender: UISwitch!) {self.autostepStateDidChange(sender: sender)}
     
     /// Response to one finger tap on screen (proceed to the next instruction step)
-    /// - Parameter gesture: Finger tap gesture recognizer
     func oneTapGestureFired() {
         self.nc.tryNextAction(isSurfaceOn: self.surface.isOn, isPreviousOn: self.previous.isOn)
         self.updateStepText()
     }
     
     /// Response to two finger tap on screen (back to the previous instruction step)
-    /// - Parameter gesture: Finger tap gesture recognizer
     func twoTapGestureFired() {
         self.nc.tryPrevAction()
         self.updateStepText()

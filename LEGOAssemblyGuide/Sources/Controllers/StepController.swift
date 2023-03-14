@@ -9,7 +9,7 @@
 import UIKit
 import ARKit
 
-/// The class storing CNN models, and functions to detect whether a construction step is finished
+/// The class storing step classification models, and functions to decide whether a construction step is finished
 @available(iOS 13.0.0, *)
 class StepController {
     
