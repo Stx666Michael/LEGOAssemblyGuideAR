@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07139A4629C058CB00B7CD93 /* ARInstructionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07139A4529C058CB00B7CD93 /* ARInstructionTests.swift */; };
 		071A122129A459F200029948 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071A122029A459F200029948 /* UIImageExtension.swift */; };
 		0776910E29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */; };
 		07D7504829B33F3700C1D9B6 /* NodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7504729B33F3700C1D9B6 /* NodeController.swift */; };
@@ -24,6 +25,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		07139A4729C058CB00B7CD93 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 527951C220CC07A000B9119D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 527951C920CC07A000B9119D;
+			remoteInfo = LEGOAssemblyGuide;
+		};
 		07D7505729B4AB1D00C1D9B6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 527951C220CC07A000B9119D /* Project object */;
@@ -41,11 +49,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		07139A4329C058CB00B7CD93 /* LEGOAssemblyGuideIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEGOAssemblyGuideIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		07139A4529C058CB00B7CD93 /* ARInstructionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARInstructionTests.swift; sourceTree = "<group>"; };
 		071A122029A459F200029948 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = LEGOStepClassifier.mlmodel; sourceTree = "<group>"; };
 		07D7504729B33F3700C1D9B6 /* NodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeController.swift; sourceTree = "<group>"; };
 		07D7504929B37CDF00C1D9B6 /* StepController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepController.swift; sourceTree = "<group>"; };
-		07D7505329B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEGOAssemblyGuideTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		07D7505329B4AB1D00C1D9B6 /* LEGOAssemblyGuideUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEGOAssemblyGuideUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		07D7505529B4AB1D00C1D9B6 /* NodeControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeControllerTests.swift; sourceTree = "<group>"; };
 		07D7506429B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEGOAssemblyGuideUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		07D7506629B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LEGOAssemblyGuideUITests.swift; sourceTree = "<group>"; };
@@ -62,6 +72,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		07139A4029C058CB00B7CD93 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		07D7505029B4AB1D00C1D9B6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -86,6 +103,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		07139A4429C058CB00B7CD93 /* LEGOAssemblyGuideIntegrationTests */ = {
+			isa = PBXGroup;
+			children = (
+				07139A4529C058CB00B7CD93 /* ARInstructionTests.swift */,
+			);
+			path = LEGOAssemblyGuideIntegrationTests;
+			sourceTree = "<group>";
+		};
 		07D7504B29B4955A00C1D9B6 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -118,14 +143,14 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
-		07D7505429B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests */ = {
+		07D7505429B4AB1D00C1D9B6 /* LEGOAssemblyGuideUnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				07F2E65929BCE1DB006D05EB /* ViewControllerTests.swift */,
 				07F2E65529BC7E5E006D05EB /* StepControllerTests.swift */,
 				07D7505529B4AB1D00C1D9B6 /* NodeControllerTests.swift */,
-				07F2E65929BCE1DB006D05EB /* ViewControllerTests.swift */,
 			);
-			path = LEGOAssemblyGuideTests;
+			path = LEGOAssemblyGuideUnitTests;
 			sourceTree = "<group>";
 		};
 		07D7506529B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests */ = {
@@ -140,8 +165,9 @@
 			isa = PBXGroup;
 			children = (
 				527951CC20CC07A000B9119D /* LEGOAssemblyGuide */,
-				07D7505429B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests */,
+				07D7505429B4AB1D00C1D9B6 /* LEGOAssemblyGuideUnitTests */,
 				07D7506529B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests */,
+				07139A4429C058CB00B7CD93 /* LEGOAssemblyGuideIntegrationTests */,
 				527951CB20CC07A000B9119D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -150,8 +176,9 @@
 			isa = PBXGroup;
 			children = (
 				527951CA20CC07A000B9119D /* LEGOAssemblyGuide.app */,
-				07D7505329B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests.xctest */,
+				07D7505329B4AB1D00C1D9B6 /* LEGOAssemblyGuideUnitTests.xctest */,
 				07D7506429B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests.xctest */,
+				07139A4329C058CB00B7CD93 /* LEGOAssemblyGuideIntegrationTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -169,9 +196,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		07D7505229B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests */ = {
+		07139A4229C058CB00B7CD93 /* LEGOAssemblyGuideIntegrationTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 07D7505929B4AB1D00C1D9B6 /* Build configuration list for PBXNativeTarget "LEGOAssemblyGuideTests" */;
+			buildConfigurationList = 07139A4929C058CB00B7CD93 /* Build configuration list for PBXNativeTarget "LEGOAssemblyGuideIntegrationTests" */;
+			buildPhases = (
+				07139A3F29C058CB00B7CD93 /* Sources */,
+				07139A4029C058CB00B7CD93 /* Frameworks */,
+				07139A4129C058CB00B7CD93 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				07139A4829C058CB00B7CD93 /* PBXTargetDependency */,
+			);
+			name = LEGOAssemblyGuideIntegrationTests;
+			productName = LEGOAssemblyGuideIntegrationTests;
+			productReference = 07139A4329C058CB00B7CD93 /* LEGOAssemblyGuideIntegrationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		07D7505229B4AB1D00C1D9B6 /* LEGOAssemblyGuideUnitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07D7505929B4AB1D00C1D9B6 /* Build configuration list for PBXNativeTarget "LEGOAssemblyGuideUnitTests" */;
 			buildPhases = (
 				07D7504F29B4AB1D00C1D9B6 /* Sources */,
 				07D7505029B4AB1D00C1D9B6 /* Frameworks */,
@@ -182,9 +227,9 @@
 			dependencies = (
 				07D7505829B4AB1D00C1D9B6 /* PBXTargetDependency */,
 			);
-			name = LEGOAssemblyGuideTests;
+			name = LEGOAssemblyGuideUnitTests;
 			productName = LEGOAssemblyGuideTests;
-			productReference = 07D7505329B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests.xctest */;
+			productReference = 07D7505329B4AB1D00C1D9B6 /* LEGOAssemblyGuideUnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		07D7506329B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests */ = {
@@ -232,6 +277,10 @@
 				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = "Tianxiang Song";
 				TargetAttributes = {
+					07139A4229C058CB00B7CD93 = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = 527951C920CC07A000B9119D;
+					};
 					07D7505229B4AB1D00C1D9B6 = {
 						CreatedOnToolsVersion = 14.2;
 						TestTargetID = 527951C920CC07A000B9119D;
@@ -260,13 +309,21 @@
 			projectRoot = "";
 			targets = (
 				527951C920CC07A000B9119D /* LEGOAssemblyGuide */,
-				07D7505229B4AB1D00C1D9B6 /* LEGOAssemblyGuideTests */,
+				07D7505229B4AB1D00C1D9B6 /* LEGOAssemblyGuideUnitTests */,
 				07D7506329B4D4F000C1D9B6 /* LEGOAssemblyGuideUITests */,
+				07139A4229C058CB00B7CD93 /* LEGOAssemblyGuideIntegrationTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		07139A4129C058CB00B7CD93 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		07D7505129B4AB1D00C1D9B6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -295,6 +352,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		07139A3F29C058CB00B7CD93 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07139A4629C058CB00B7CD93 /* ARInstructionTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		07D7504F29B4AB1D00C1D9B6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -329,6 +394,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		07139A4829C058CB00B7CD93 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 527951C920CC07A000B9119D /* LEGOAssemblyGuide */;
+			targetProxy = 07139A4729C058CB00B7CD93 /* PBXContainerItemProxy */;
+		};
 		07D7505829B4AB1D00C1D9B6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 527951C920CC07A000B9119D /* LEGOAssemblyGuide */;
@@ -361,6 +431,48 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		07139A4A29C058CB00B7CD93 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LN4AV544VY;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stx666michael.LEGOAssemblyGuideIntegrationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LEGOAssemblyGuide.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LEGOAssemblyGuide";
+			};
+			name = Debug;
+		};
+		07139A4B29C058CB00B7CD93 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LN4AV544VY;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stx666michael.LEGOAssemblyGuideIntegrationTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LEGOAssemblyGuide.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LEGOAssemblyGuide";
+			};
+			name = Release;
+		};
 		07D7505A29B4AB1D00C1D9B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -598,7 +710,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		07D7505929B4AB1D00C1D9B6 /* Build configuration list for PBXNativeTarget "LEGOAssemblyGuideTests" */ = {
+		07139A4929C058CB00B7CD93 /* Build configuration list for PBXNativeTarget "LEGOAssemblyGuideIntegrationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				07139A4A29C058CB00B7CD93 /* Debug */,
+				07139A4B29C058CB00B7CD93 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		07D7505929B4AB1D00C1D9B6 /* Build configuration list for PBXNativeTarget "LEGOAssemblyGuideUnitTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				07D7505A29B4AB1D00C1D9B6 /* Debug */,

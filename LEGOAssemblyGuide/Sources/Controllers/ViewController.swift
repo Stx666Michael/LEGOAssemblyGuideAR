@@ -124,6 +124,29 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
+    /// Calculate instruction step change based on drag distance, and update instructions
+    /// - Parameter currentPoint: The current position of user's finger
+    func calculateStepChange(currentPoint: CGPoint) {
+        let screenWidth = UIScreen.main.bounds.width
+        let distancePerActionJump = max(Int(screenWidth)/(self.nc.nodes.count+1), 1)
+        let dragDistanceX = currentPoint.x - self.initialPoint.x
+        let currentActionShift = Int(dragDistanceX) / distancePerActionJump
+        var relativeActionShift = 0
+        if (self.nc.lastActionShift != currentActionShift) {
+            relativeActionShift = currentActionShift - self.nc.lastActionShift
+            self.nc.lastActionShift = currentActionShift
+            //print(relativeActionShift)
+            for _ in 1...abs(relativeActionShift) {
+                if (relativeActionShift > 0) {
+                    self.nc.tryNextAction(isSurfaceOn: self.surface.isOn, isPreviousOn: self.previous.isOn)
+                } else {
+                    self.nc.tryPrevAction()
+                }
+                self.updateStepText()
+            }
+        }
+    }
+    
     /// Setup recongizers for tap, press and drag gestures
     func setupGestureRecognizer() {
         // Recognize one finger tap
@@ -207,31 +230,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     /// - Parameter gesture: Finger long press gesture recognizer
     func longPressGestureFired(gesture: UILongPressGestureRecognizer) {
         guard let view = gesture.view else {return}
-        let screenWidth = UIScreen.main.bounds.width
-        let distancePerActionJump = max(Int(screenWidth)/(self.nc.nodes.count+1), 1)
-        
         if (gesture.state == .began) {
             self.initialPoint = gesture.location(in: view.superview)
             print("Action jump enabled!")
             self.currentStep.text = "Drag left / right to change steps"
         } else if (gesture.state == .changed) {
             let currentPoint = gesture.location(in: view.superview)
-            let dragDistanceX = currentPoint.x - initialPoint.x
-            let currentActionShift = Int(dragDistanceX) / distancePerActionJump
-            var relativeActionShift = 0
-            if (self.nc.lastActionShift != currentActionShift) {
-                relativeActionShift = currentActionShift - self.nc.lastActionShift
-                self.nc.lastActionShift = currentActionShift
-                //print(relativeActionShift)
-                for _ in 1...abs(relativeActionShift) {
-                    if (relativeActionShift > 0) {
-                        self.nc.tryNextAction(isSurfaceOn: self.surface.isOn, isPreviousOn: self.previous.isOn)
-                    } else {
-                        self.nc.tryPrevAction()
-                    }
-                    self.updateStepText()
-                }
-            }
+            self.calculateStepChange(currentPoint: currentPoint)
         } else if (gesture.state == .ended) {
             self.updateStepText()
             self.nc.lastActionShift = 0
