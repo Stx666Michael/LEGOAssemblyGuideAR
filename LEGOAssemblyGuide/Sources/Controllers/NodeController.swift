@@ -39,7 +39,7 @@ class NodeController {
     /// Take nodes from the SCN graph sequentially into the list, and setup their animations
     func initializeNodes() {
         self.subScene.rootNode.childNode(withName: "Lego_21034_1_London", recursively: true)?.removeFromParentNode()
-        self.rootNode.position = SCNVector3(x: -10, y: 0, z: 0)
+        self.rootNode.position = SCNVector3(x: -9.5, y: 0, z: 0)
         //self.rootNode.eulerAngles.y = -.pi / 2
         let subviewAction = SCNAction.repeatForever(SCNAction.rotateBy(x: .pi, y: 0, z: .pi, duration: 5))
         
