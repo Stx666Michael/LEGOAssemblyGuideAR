@@ -10,30 +10,40 @@ import XCTest
 import ARKit
 @testable import LEGOAssemblyGuide
 
+/// Integration tests for AR instruction flow
 final class ARInstructionTests: XCTestCase {
-
+    
+    /// The system under test
     var sut: ViewController!
-
+    
+    /// The maximum number of assembly steps
+    let maxStep = 467
+    
+    /// This method is called before the invocation of each test method in the class.
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        // Put setup code here.
         sut = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ViewController") as? ViewController
         sut.loadViewIfNeeded()
     }
-
+    
+    /// This method is called after the invocation of each test method in the class.
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        // Put teardown code here.
     }
 
     func testStepChange() throws {
         sut.nc.initializeNodes()
         XCTAssertTrue(sut.nc.currentActionIndex == 0)
-        sut.oneTapGestureFired()
-        XCTAssertTrue(sut.nc.currentActionIndex == 1)
-        XCTAssertTrue(sut.currentStep.text == "Step: 2 / 467")
-        sut.twoTapGestureFired()
-        XCTAssertTrue(sut.nc.currentActionIndex == 0)
-        XCTAssertTrue(sut.currentStep.text == "Step: 1 / 467")
-        
+        for i in 1...maxStep-1 {
+            sut.oneTapGestureFired()
+            XCTAssertTrue(sut.nc.currentActionIndex == i)
+            XCTAssertTrue(sut.currentStep.text == "Step: " + String(i+1) + " / 467")
+        }
+        for i in 1...maxStep-1 {
+            sut.twoTapGestureFired()
+            XCTAssertTrue(sut.nc.currentActionIndex == maxStep-i-1)
+            XCTAssertTrue(sut.currentStep.text == "Step: " + String(maxStep-i) + " / 467")
+        }
         sut.initialPoint = CGPoint(x: 100, y: 100)
         sut.calculateStepChange(currentPoint: CGPoint(x: 200, y: 100))
         let stepIndex = sut.nc.currentActionIndex

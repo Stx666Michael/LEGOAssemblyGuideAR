@@ -58,13 +58,11 @@ final class LEGOAssemblyGuideUITests: XCTestCase {
             step = app.staticTexts["Step: " + String(i) + " / 467"]
             XCTAssertTrue(step.exists)
         }
-        
         for i in 1...3 {
             arView.twoFingerTap()
             step = app.staticTexts["Step: " + String(4-i) + " / 467"]
             XCTAssertTrue(step.exists)
         }
-        
         arView.twoFingerTap()
         step = app.staticTexts["Step: 1 / 467"]
         XCTAssertTrue(step.exists)

@@ -27,8 +27,62 @@ final class RenderingModeTests: XCTestCase {
     }
 
     func testSurfaceMode() throws {
-        for _ in 1...200 {sut.oneTapGestureFired()}
-        
+        for _ in 1...100 {sut.oneTapGestureFired()}
+        for node in sut.nc.nodes[...(sut.nc.currentActionIndex-1)] {
+            XCTAssertTrue(node.opacity == 1)
+        }
+        sut.surface.isOn = false
+        sut.surfaceStateDidChange(sender: sut.surface)
+        for _ in 1...100 {sut.oneTapGestureFired()}
+        for node in sut.nc.nodes[...(sut.nc.currentActionIndex-1)] {
+            XCTAssertFalse(node.opacity == 1)
+        }
+        sut.surface.isOn = true
+        sut.surfaceStateDidChange(sender: sut.surface)
+        for _ in 1...100 {sut.oneTapGestureFired()}
+        for node in sut.nc.nodes[...(sut.nc.currentActionIndex-1)] {
+            XCTAssertTrue(node.opacity == 1)
+        }
+    }
+    
+    func testWireframeMode() throws {
+        XCTAssertFalse(sut.sceneView.debugOptions.contains(SCNDebugOptions.showWireframe))
+        sut.wireframe.isOn = true
+        sut.wireframeStateDidChange(sender: sut.wireframe)
+        XCTAssertTrue(sut.sceneView.debugOptions.contains(SCNDebugOptions.showWireframe))
+        sut.wireframe.isOn = false
+        sut.wireframeStateDidChange(sender: sut.wireframe)
+        XCTAssertFalse(sut.sceneView.debugOptions.contains(SCNDebugOptions.showWireframe))
+    }
+    
+    func testPreviousMode() throws {
+        for _ in 1...100 {sut.oneTapGestureFired()}
+        for node in sut.nc.nodes[...(sut.nc.currentActionIndex-1)] {
+            XCTAssertTrue(node.isHidden == false)
+        }
+        sut.previous.isOn = false
+        sut.previousStateDidChange(sender: sut.previous)
+        for _ in 1...100 {sut.oneTapGestureFired()}
+        for node in sut.nc.nodes[...(sut.nc.currentActionIndex-1)] {
+            XCTAssertTrue(node.isHidden == true)
+        }
+        sut.previous.isOn = true
+        sut.previousStateDidChange(sender: sut.previous)
+        for _ in 1...100 {sut.oneTapGestureFired()}
+        for node in sut.nc.nodes[...(sut.nc.currentActionIndex-1)] {
+            XCTAssertTrue(node.isHidden == false)
+        }
+    }
+    
+    func testPreviewMode() throws {
+        sut.subSceneView.scene = sut.nc.subScene
+        XCTAssertFalse(sut.subSceneView.isHidden)
+        sut.preview.isOn = false
+        sut.previewStateDidChange(sender: sut.preview)
+        XCTAssertTrue(sut.subSceneView.isHidden)
+        sut.preview.isOn = true
+        sut.previewStateDidChange(sender: sut.preview)
+        XCTAssertFalse(sut.subSceneView.isHidden)
     }
 
 }
