@@ -9,20 +9,27 @@
 import XCTest
 @testable import LEGOAssemblyGuide
 
+/// Unit tests for class `StepController`
 final class StepControllerTests: XCTestCase {
-
+    
+    /// Mocked class `NodeController` for unit testing
     let nc = NodeController()
+    
+    /// The system under test
     var sut: StepController!
     
+    /// This method is called before the invocation of each test method in the class.
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        // Put setup code here.
         sut = StepController(nc: self.nc)
     }
-
+    
+    /// This method is called after the invocation of each test method in the class.
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        // Put teardown code here.
     }
-
+    
+    /// Ensure step score is properly calculated given CNN predictions
     func testCalculateStepScore() throws {
         sut.calculateStepScore(probability: ["Finished": 0.1, "Unfinished": 0.9], currentStep: UILabel())
         XCTAssertTrue(nc.stepScore == 0)

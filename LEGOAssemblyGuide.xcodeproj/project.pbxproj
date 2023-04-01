@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		07139A4629C058CB00B7CD93 /* ARInstructionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07139A4529C058CB00B7CD93 /* ARInstructionTests.swift */; };
 		071A122129A459F200029948 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071A122029A459F200029948 /* UIImageExtension.swift */; };
+		0753152E29D82C0400EE1961 /* RenderingModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0753152D29D82C0400EE1961 /* RenderingModeTests.swift */; };
 		0776910E29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */; };
 		07D7504829B33F3700C1D9B6 /* NodeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7504729B33F3700C1D9B6 /* NodeController.swift */; };
 		07D7504A29B37CDF00C1D9B6 /* StepController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D7504929B37CDF00C1D9B6 /* StepController.swift */; };
@@ -52,6 +53,7 @@
 		07139A4329C058CB00B7CD93 /* LEGOAssemblyGuideIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LEGOAssemblyGuideIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		07139A4529C058CB00B7CD93 /* ARInstructionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARInstructionTests.swift; sourceTree = "<group>"; };
 		071A122029A459F200029948 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
+		0753152D29D82C0400EE1961 /* RenderingModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderingModeTests.swift; sourceTree = "<group>"; };
 		0776910D29AF6C4D00B9503B /* LEGOStepClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = LEGOStepClassifier.mlmodel; sourceTree = "<group>"; };
 		07D7504729B33F3700C1D9B6 /* NodeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeController.swift; sourceTree = "<group>"; };
 		07D7504929B37CDF00C1D9B6 /* StepController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepController.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				07139A4529C058CB00B7CD93 /* ARInstructionTests.swift */,
+				0753152D29D82C0400EE1961 /* RenderingModeTests.swift */,
 			);
 			path = LEGOAssemblyGuideIntegrationTests;
 			sourceTree = "<group>";
@@ -357,6 +360,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07139A4629C058CB00B7CD93 /* ARInstructionTests.swift in Sources */,
+				0753152E29D82C0400EE1961 /* RenderingModeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
