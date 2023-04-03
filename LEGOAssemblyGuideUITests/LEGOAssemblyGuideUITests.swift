@@ -26,9 +26,30 @@ final class LEGOAssemblyGuideUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testElementExistence() throws {
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testElementVisibility() throws {
         XCTAssertTrue(app.staticTexts["Please scan marker to start"].exists)
+        XCTAssertFalse(app.staticTexts["Surface"].exists)
+        XCTAssertFalse(app.staticTexts["Wireframe"].exists)
+        XCTAssertFalse(app.staticTexts["Hand Occlusion"].exists)
+        XCTAssertFalse(app.staticTexts["Previous"].exists)
+        XCTAssertFalse(app.staticTexts["Preview"].exists)
+        XCTAssertFalse(app.staticTexts["Auto Step"].exists)
+        
+        XCTAssertFalse(app.switches["Surface"].exists)
+        XCTAssertFalse(app.switches["Wireframe"].exists)
+        XCTAssertFalse(app.switches["Hand"].exists)
+        XCTAssertFalse(app.switches["Previous"].exists)
+        XCTAssertFalse(app.switches["Preview"].exists)
+        XCTAssertFalse(app.switches["Autostep"].exists)
+        
+        XCTAssertTrue(app.otherElements["AR Scene View"].exists)
+        XCTAssertTrue(app.otherElements["Sub Scene View"].exists)
+        XCTAssertFalse(app.otherElements["Functional View"].exists)
+        
+        let step = app.staticTexts["Step: 1 / 467"]
+        XCTAssertTrue(step.waitForExistence(timeout: 20))
+        
+        XCTAssertTrue(app.otherElements["Functional View"].exists)
         XCTAssertTrue(app.staticTexts["Surface"].exists)
         XCTAssertTrue(app.staticTexts["Wireframe"].exists)
         XCTAssertTrue(app.staticTexts["Hand Occlusion"].exists)
@@ -42,13 +63,25 @@ final class LEGOAssemblyGuideUITests: XCTestCase {
         XCTAssertTrue(app.switches["Previous"].exists)
         XCTAssertTrue(app.switches["Preview"].exists)
         XCTAssertTrue(app.switches["Autostep"].exists)
-        
-        XCTAssertTrue(app.otherElements["AR Scene View"].exists)
-        XCTAssertTrue(app.otherElements["Sub Scene View"].exists)
-        XCTAssertTrue(app.otherElements["Functional View"].exists)
     }
     
-    func testScreenTap() throws {
+    func testElementInteractivity() throws {
+        let step = app.staticTexts["Step: 1 / 467"]
+        XCTAssertTrue(step.waitForExistence(timeout: 20))
+        
+        XCTAssertTrue(app.switches["Surface"].isEnabled)
+        XCTAssertTrue(app.switches["Wireframe"].isEnabled)
+        XCTAssertTrue(app.switches["Hand"].isEnabled)
+        XCTAssertTrue(app.switches["Previous"].isEnabled)
+        XCTAssertTrue(app.switches["Preview"].isEnabled)
+        XCTAssertTrue(app.switches["Autostep"].isEnabled)
+        
+        XCTAssertTrue(app.otherElements["AR Scene View"].isEnabled)
+        XCTAssertTrue(app.otherElements["Sub Scene View"].isEnabled)
+        XCTAssertTrue(app.otherElements["Functional View"].isEnabled)
+    }
+    
+    func testScreenGesture() throws {
         let arView = app.otherElements["AR Scene View"]
         var step = app.staticTexts["Step: 1 / 467"]
         XCTAssertTrue(step.waitForExistence(timeout: 20))
