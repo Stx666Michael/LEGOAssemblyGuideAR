@@ -362,7 +362,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 self.preview.setOn(false, animated: true)
                 self.subSceneView.isHidden = true
             }
-            let timeInterval = 0.1
+            let timeInterval = 0.05
             self.autoStepTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
                 if (self.nc.currentActionIndex < self.nc.nodes.count) {
                     let opacity = self.nc.nodes[self.nc.currentActionIndex].opacity
