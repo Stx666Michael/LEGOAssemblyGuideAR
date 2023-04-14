@@ -349,6 +349,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     /// - Parameter sender: Switch "autostep"
     func autostepStateDidChange(sender: UISwitch!) {
         if (sender.isOn == true) {
+            let alert = UIAlertController(title: "Warning", message: "Change default switch settings in AutoStep mode may affect performance", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
             self.prediction.isHidden = false
             if (!self.wireframe.isOn) {
                 self.wireframe.setOn(true, animated: true)

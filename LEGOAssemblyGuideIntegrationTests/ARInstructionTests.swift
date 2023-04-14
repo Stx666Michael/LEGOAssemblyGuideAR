@@ -30,7 +30,8 @@ final class ARInstructionTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here.
     }
-
+    
+    /// Tests to ensure that proper instruction could be presented under certain user action, including single finger tap, two fingers tap and press & drag.
     func testStepChange() throws {
         sut.nc.initializeNodes()
         XCTAssertTrue(sut.nc.currentActionIndex == 0)

@@ -10,22 +10,27 @@ import XCTest
 import ARKit
 @testable import LEGOAssemblyGuide
 
+/// Integration tests for AR instruction rendering
 final class RenderingModeTests: XCTestCase {
     
+    /// The system under test
     var sut: ViewController!
-
+    
+    /// This method is called before the invocation of each test method in the class.
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        // Put setup code here.
         sut = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ViewController") as? ViewController
         sut.loadViewIfNeeded()
         sut.nc.initializeNodes()
         sut.setupSwitches()
     }
-
+    
+    /// This method is called after the invocation of each test method in the class.
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        // Put teardown code here.
     }
-
+    
+    /// Tests to ensure `Surface` rendering mode could be enabled or disabled by state changes in corresponding switches
     func testSurfaceMode() throws {
         for _ in 1...100 {sut.oneTapGestureFired()}
         for node in sut.nc.nodes[...(sut.nc.currentActionIndex-1)] {
@@ -45,6 +50,7 @@ final class RenderingModeTests: XCTestCase {
         }
     }
     
+    /// Tests to ensure `Wireframe` rendering mode could be enabled or disabled by state changes in corresponding switches
     func testWireframeMode() throws {
         XCTAssertFalse(sut.sceneView.debugOptions.contains(SCNDebugOptions.showWireframe))
         sut.wireframe.isOn = true
@@ -55,6 +61,7 @@ final class RenderingModeTests: XCTestCase {
         XCTAssertFalse(sut.sceneView.debugOptions.contains(SCNDebugOptions.showWireframe))
     }
     
+    /// Tests to ensure `Previous` rendering mode could be enabled or disabled by state changes in corresponding switches
     func testPreviousMode() throws {
         for _ in 1...100 {sut.oneTapGestureFired()}
         for node in sut.nc.nodes[...(sut.nc.currentActionIndex-1)] {
@@ -74,6 +81,7 @@ final class RenderingModeTests: XCTestCase {
         }
     }
     
+    /// Tests to ensure `Preview` rendering mode could be enabled or disabled by state changes in corresponding switches
     func testPreviewMode() throws {
         sut.subSceneView.scene = sut.nc.subScene
         XCTAssertFalse(sut.subSceneView.isHidden)

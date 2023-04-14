@@ -8,12 +8,15 @@
 
 import XCTest
 
+/// UI tests for the application
 final class LEGOAssemblyGuideUITests: XCTestCase {
-
+    
+    /// The application under test
     let app = XCUIApplication()
     
+    /// This method is called before the invocation of each test method in the class.
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        // Put setup code here.
         app.launch()
 
         // In UI tests it is usually best to stop immediately when a failure occurs.
@@ -21,11 +24,13 @@ final class LEGOAssemblyGuideUITests: XCTestCase {
 
         // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
     }
-
+    
+    /// This method is called after the invocation of each test method in the class.
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        // Put teardown code here.
     }
-
+    
+    /// Test element visibility, including text labels, preview window and functional switches
     func testElementVisibility() throws {
         XCTAssertTrue(app.staticTexts["Please scan marker to start"].exists)
         XCTAssertFalse(app.staticTexts["Surface"].exists)
@@ -65,6 +70,7 @@ final class LEGOAssemblyGuideUITests: XCTestCase {
         XCTAssertTrue(app.switches["Autostep"].exists)
     }
     
+    /// Test element interactivity, including switches and AR scene view
     func testElementInteractivity() throws {
         let step = app.staticTexts["Step: 1 / 467"]
         XCTAssertTrue(step.waitForExistence(timeout: 20))
@@ -81,6 +87,7 @@ final class LEGOAssemblyGuideUITests: XCTestCase {
         XCTAssertTrue(app.otherElements["Functional View"].isEnabled)
     }
     
+    /// Test gesture handling, including single finger tap and two fingers tap
     func testScreenGesture() throws {
         let arView = app.otherElements["AR Scene View"]
         var step = app.staticTexts["Step: 1 / 467"]
