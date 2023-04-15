@@ -1,6 +1,29 @@
-## LEGO Assembly Guide with Augmented Reality
+# LEGO Assembly Guide with Augmented Reality
 
-Welcome to the Final Year Project 2022-2023 developed by Tianxiang Song. Please view the dissertation (via [Moodle](https://moodle.nottingham.ac.uk/my/) submission) for additional information. Specifically, see Appendix A for **installation/usage** and Appendix E for **file structure**.
+Welcome to the Final Year Project 2022-2023 developed by Tianxiang Song. Please view the dissertation (via [Moodle](https://moodle.nottingham.ac.uk/my/) submission) for additional information. Specifically, see Appendix A for **installation** and **usage**.
 
-### Abstract
-Augmented Reality (AR) has a huge potential on assisting manual assembly tasks. By overlaying digital models on the camera view as instructions, there could be significant improvements on assembly accuracy and speed. However, AR-guided assembly on small pieces has been a challenging task, regarding instruction visibility, alignment accuracy and automation feasibility. In this work, an AR tutoring system that guides LEGO block construction is developed, with a series of novel methods optimized for small part assembly. The AR instruction visibility is improved by a texture-wireframe hybrid rendering mode. The virtual-physical alignment error is decreased to less than 1 mm throughout the model by a flexible marker design and VIO-based registration. Realistic object occlusion is accomplished through a fast and accurate algorithm to reveal correct spatial relationship between AR instruction and physical models. A unique instruction automation method is proposed to trigger the next AR instruction by detecting completed assembly steps, achieving high generalization with less training samples. The major finding of this project is that the integration of these techniques makes model-based AR instructions reliable for small part assembly, validated by working on a complex LEGO set.
+## Project File Structure
+
+In project root directory, the folder hierarchy is as follows:
+
+-   `LEGOAssemblyGuide` - main files for the application
+    -   `Assets` - including UI Markup Language, AR reference image, digital LEGO model, CNN model and app icons
+    -   `Data` - dataset for assembly state classification, including source code for CNN training and testing (`train.ipynb`)
+    -   `Sources` - source code of the main application
+-   `LEGOAssemblyGuideDocs` - files for HTML documentation
+-   `LEGOAssemblyGuideIntegrationTests` - code for integration testing
+-   `LEGOAssemblyGuideUITests` - code for UI testing
+-   `LEGOAssemblyGuideUnitTests` - code for unit testing
+
+In addition, you can find two supplementary PDF files:
+
+-   `AssemblyBaseA4` - print it in A4 paper as assembly base with image marker
+-   `AssemblyGuideBook` - official assembly guide for LEGO 21034
+
+## Software Documentation
+
+There are three ways to view the software documentation:
+
+1.  Open `LEGOAssemblyGuide.doccarchive` in project root with Xcode
+2.  Visit [online version](https://stx666michael.github.io/) in a web browser
+3.  Direct to `LEGOAssemblyGuideDocs/documentation/legoassemblyguide` and open `index.html` in a web browser
