@@ -1,6 +1,6 @@
 # LEGO Assembly Guide with Augmented Reality
 
-Welcome to the Final Year Project 2022-2023 developed by Tianxiang Song. Please view the dissertation (via [Moodle](https://moodle.nottingham.ac.uk/my/) submission) for additional information. Specifically, see Appendix A for **installation** and **usage**.
+Welcome to the Final Year Project 2022-2023 developed by Tianxiang Song. Please view the [dissertation](./Dissertation.pdf) for additional information. Specifically, see Appendix A for **installation** and **usage**.
 
 ## Project File Structure
 
